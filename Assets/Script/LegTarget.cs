@@ -40,6 +40,7 @@ public class LegTarget : MonoBehaviour
         if (collision.collider.CompareTag("Ground") && curState == PointState.Idle) // 현재 땅에서 가만히 있는 상태에서 탈출 할 때
         {
             curState = PointState.TakeOff; // 타겟이 공중에 뜬 상태
+            body.RigidStopControl(true);
         }
     }
 
@@ -60,15 +61,17 @@ public class LegTarget : MonoBehaviour
         if(other.CompareTag("Ground") && curState == PointState.Idle) // 현재 땅에서 가만히 있는 상태에서 탈출 할 때
         {
             curState = PointState.TakeOff; // 타겟이 공중에 뜬 상태
+            body.RigidStopControl(true);
         }
     }
 
     private void LandAction()
     {
+        body.RigidStopControl(false);
         curPos = transform.position;
         curState = PointState.Idle;
         Vector3 change = Vector3.Lerp(curPos - prePos, Vector3.zero, 0.3f); // 다리 이동거리의 70%
 
-        body.MoveBody(change,transform.name);
+        body.MoveBody(change,this);
     }
 }
