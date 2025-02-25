@@ -2324,7 +2324,7 @@ GameObject:
   - component: {fileID: 1480199031}
   - component: {fileID: 1480199030}
   m_Layer: 0
-  m_Name: Bone.003_end
+  m_Name: Bone.003_end_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2914,7 +2914,7 @@ GameObject:
   - component: {fileID: 1691011755}
   - component: {fileID: 1691011754}
   m_Layer: 0
-  m_Name: Bone.003_end
+  m_Name: Bone.003_end_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3455,7 +3455,7 @@ GameObject:
   - component: {fileID: 2062372641}
   - component: {fileID: 2062372640}
   m_Layer: 0
-  m_Name: Bone.003_end
+  m_Name: Bone.003_end_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3797,7 +3797,7 @@ GameObject:
   - component: {fileID: 1258663942487352886}
   - component: {fileID: 1258663942487352884}
   m_Layer: 0
-  m_Name: Bone.003_end
+  m_Name: Bone.003_end_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

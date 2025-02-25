@@ -71,7 +71,12 @@ public class Body : MonoBehaviour
                 if (legsEnd[i] != lt)
                 {
                     float distt = DistanceCheck(legsEnd[i].transform);
-                    Debug.Log("leg_" + i + " : " + distt);
+                    Debug.Log(legsEnd[i].transform.name + " : " + distt);
+
+                    if(dist > 7.5f || dist < 3f)
+                    {
+                        //´Ù¸® Å»¶ô
+                    }
                 }
             }
 
