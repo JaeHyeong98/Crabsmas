@@ -33,16 +33,6 @@ public class Body : MonoBehaviour
         }
     }
 
-    IEnumerator Start()
-    {
-        yield return new WaitUntil(() => legsEnd.Count > 0);
-
-        Vector3 a = new Vector3(legsEnd[0].transform.position.x, 0, legsEnd[0].transform.position.z);
-        Vector3 b = new Vector3(transform.position.x, 0, transform.position.z);
-
-        Debug.Log(Vector3.Distance(a,b));
-    }
-
 
     public void AddLeg(Transform t)
     { 
@@ -71,11 +61,11 @@ public class Body : MonoBehaviour
                 if (legsEnd[i] != lt)
                 {
                     float distt = DistanceCheck(legsEnd[i].transform);
-                    Debug.Log(legsEnd[i].transform.name + " : " + distt);
 
-                    if(dist > 7.5f || dist < 3f)
+                    if(distt > 7.5f || distt < 3f)
                     {
-                        //´Ù¸® Å»¶ô
+                        legsEnd[i].EscapeLeg();
+                        legsEnd.RemoveAt(i);
                     }
                 }
             }
@@ -109,5 +99,5 @@ public class Body : MonoBehaviour
         return dist;
     }
 
-
+    
 }
