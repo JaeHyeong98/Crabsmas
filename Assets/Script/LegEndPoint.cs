@@ -27,6 +27,8 @@ public class LegEndPoint : MonoBehaviour
 
     IEnumerator EscapeLeg_cou()
     {
+        body.RigidStopControl(true);
+        body.RigidStopControl(false);
         legStart.parent = deathLeg;
         Destroy(legStart.GetComponent<FixedJoint>());
 
@@ -39,5 +41,6 @@ public class LegEndPoint : MonoBehaviour
 
         rb.isKinematic = true;
         legStart.GetComponent<Collider>().enabled = false;
+        
     }
 }
