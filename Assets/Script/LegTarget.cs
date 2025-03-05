@@ -70,7 +70,7 @@ public class LegTarget : MonoBehaviour
         body.RigidStopControl(false);
         curPos = transform.position;
         curState = PointState.Idle;
-        Vector3 change = Vector3.Lerp(curPos - prePos, Vector3.zero, 0.3f); // 다리 이동거리의 70%
+        Vector3 change = (curPos - prePos).normalized; //이동 방향
 
         body.MoveBody(change,this);
     }

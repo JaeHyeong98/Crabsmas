@@ -12,6 +12,8 @@ public class Body : MonoBehaviour
 
     public Rigidbody crabBody;  // 몸체 Rigidbody
     public float force = 100f;
+    public float legForce = 10f;
+    public float centerWeight = 1f;
 
     private float standardDist = 4.5f;
     Coroutine coroutine;
@@ -32,6 +34,8 @@ public class Body : MonoBehaviour
         {
             RigidStopControl(false);
         }
+
+        crabBody.AddForce(Vector3.up * legForce);
     }
 
 
@@ -55,33 +59,28 @@ public class Body : MonoBehaviour
 
         while (true)
         {
-            float dist = DistanceCheck(lt.transform);
-
-            for (int i = 0; i < legsEnd.Count; i++)
-            {
-                if (legsEnd[i] != lt)
-                {
-                    float distt = DistanceCheck(legsEnd[i].transform);
-
-                    if(distt > 7.5f || distt < 3f)
-                    {
-                        legsEnd[i].EscapeLeg();
-                        UpdateCenterOfMass(legsEnd[i].transform.position);
-                        legsEnd.RemoveAt(i);
-
-
-                        Vector3 downForce = Vector3.down * 40f;
-                        Vector3 upForce = Vector3.up * legsEnd.Count * 10f;
-                        crabBody.AddForce(downForce + upForce);
-                        Debug.Log(downForce + upForce);
-                    }
-                }
-            }
-
-            if (dist < standardDist)
+            if (DistanceCheck(lt.transform) < standardDist)
             {
                 crabBody.AddForce(moveDir * force * -1);
                 break;
+            }
+
+            for (int i = 0; i < legsEnd.Count; i++)
+            {
+                float dist = DistanceCheck(legsEnd[i].transform);
+
+                if (dist > 7.5f || dist < 3f)
+                {
+                    legsEnd[i].EscapeLeg();
+                    ResetCenterOfMess(legsEnd[i].name.Split("_")[2]);
+
+                    legsEnd.RemoveAt(i);
+
+
+                    Vector3 downForce = Vector3.down * 40f;
+                    Vector3 upForce = Vector3.up * legsEnd.Count * 10f;
+                    crabBody.AddForce(downForce + upForce);
+                }
             }
 
             yield return null;
@@ -107,33 +106,39 @@ public class Body : MonoBehaviour
         return dist;
     }
 
-    void UpdateCenterOfMass(Vector3 legPosition)
+    private void ResetCenterOfMess(string name)
     {
-        Vector3 newCenterOfMass = originalCenterOfMass;
-        int detachedLegCount = 0;
+        int num = int.Parse(name);
+        Debug.Log(num);
 
-        newCenterOfMass += CalculateLegCenterOfMassOffset(legPosition);
+        Vector3 orgCenter = crabBody.centerOfMass;
+        Vector3 val = Vector3.zero;
 
-        if (detachedLegCount > 0)
+        switch(num)
         {
-            newCenterOfMass /= (detachedLegCount + 1); // 평균 무게 중심 계산
-            crabBody.centerOfMass = newCenterOfMass;
+            case 0:
+                //x- y-
+                val = new Vector3(-1f, 0, -1f) * centerWeight;
+                break;
+
+            case 1:
+                //x+ y-
+                val = new Vector3(1f, 0, -1f) * centerWeight;
+                break;
+
+            case 2:
+                //x- y+
+                val = new Vector3(-1f, 0, 1f) * centerWeight;
+                break;
+
+            case 3:
+                //x+ y+
+                val = new Vector3(1f, 0, 1f) * centerWeight;
+                break;
         }
-        else
-        {
-            crabBody.centerOfMass = originalCenterOfMass; // 모든 다리가 붙어있으면 초기 무게 중심으로 복원
-        }
-    }
 
-    Vector3 CalculateLegCenterOfMassOffset(Vector3 legPosition)
-    {
-        // 떨어진 다리의 위치를 기반으로 무게 중심 이동량 계산
-        // 예시: 몸통 중심에서 다리 위치를 뺀 벡터를 사용하여 무게 중심 이동량 계산
-        Vector3 offset = transform.position - legPosition;
-
-        // 이동량 벡터의 크기를 조정하여 무게 중심 이동 강도 조절
-        offset = offset.normalized * 0.1f; // 0.1은 이동 강도 조절 값 (조절 가능)
-
-        return offset;
+        orgCenter = orgCenter + val;
+        crabBody.centerOfMass = orgCenter;
+        Debug.Log(orgCenter);
     }
 }
