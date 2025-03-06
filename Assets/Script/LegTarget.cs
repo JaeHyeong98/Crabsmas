@@ -22,8 +22,6 @@ public class LegTarget : MonoBehaviour
 
         prePos = transform.position;
         curPos = transform.position;
-
-        body.AddLeg(transform);
     }
 
     private void OnCollisionEnter(Collision collision)

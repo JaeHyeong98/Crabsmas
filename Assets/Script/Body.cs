@@ -1,26 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEngine;
 
 public class Body : MonoBehaviour
 {
-    private Transform parent;
+    public enum LegState
+    {
+        Normal,
+        Leg3,
+        Leg2_diagonal,
+        Leg2_parallel,
+        Leg1,
+        No
+    }
+
     public List<LegEndPoint> legsEnd;
     public List<Transform> legs;
-    public List<Rigidbody> legRigid;
-    public Vector3 originalCenterOfMass;
 
     public Rigidbody crabBody;  // ¸öÃ¼ Rigidbody
+    public LegState state;
     public float force = 100f;
-    public float legForce = 10f;
-    public float centerWeight = 1f;
 
+    private int legCount = 4;
     private float standardDist = 4.5f;
     Coroutine coroutine;
 
     private void Awake()
     {
-        parent = transform.parent.transform;
         crabBody = GetComponent<Rigidbody>();
     }
 
@@ -34,20 +41,38 @@ public class Body : MonoBehaviour
         {
             RigidStopControl(false);
         }
-
-        crabBody.AddForce(Vector3.up * legForce);
     }
 
+    private void FixedUpdate()
+    {
+        Vector3 upForce = Vector3.zero;
+        Debug.Log(legCount+", "+upForce);
+        //01 23 02 13
+        switch (state) 
+        {
+            case LegState.Normal:
+                upForce = Physics.gravity / 4 * -1 * crabBody.mass;
+                for (int i = 0; i<legs.Count; i++)
+                {
+                    crabBody.AddForceAtPosition(upForce, legs[i].position);
+                }
+                break;
 
-    public void AddLeg(Transform t)
-    { 
-        legs.Add(t);
-        legRigid.Add(t.GetComponent<Rigidbody>());
+            case LegState.Leg2_parallel:
+                break;
+
+            case LegState.Leg2_diagonal:
+                break;
+
+            case LegState.No:
+                break;
+        }
     }
     
     public void MoveBody(Vector3 vec,LegTarget lt)
     {
         coroutine = StartCoroutine(Move(vec, lt));
+        Vector3 upForce = Physics.gravity / legCount * -1;
     }
 
     IEnumerator Move(Vector3 vec, LegTarget lt)
@@ -67,19 +92,18 @@ public class Body : MonoBehaviour
 
             for (int i = 0; i < legsEnd.Count; i++)
             {
-                float dist = DistanceCheck(legsEnd[i].transform);
-
-                if (dist > 7.5f || dist < 3f)
+                if (!legsEnd[i].isDeath)
                 {
-                    legsEnd[i].EscapeLeg();
-                    ResetCenterOfMess(legsEnd[i].name.Split("_")[2]);
+                    float dist = DistanceCheck(legsEnd[i].transform);
+                    if (legsEnd[i] != lt && (dist > 7.5f || dist < 3f))
+                    {
+                        legsEnd[i].EscapeLeg();
+                        LegStateChage(i);
 
-                    legsEnd.RemoveAt(i);
-
-
-                    Vector3 downForce = Vector3.down * 40f;
-                    Vector3 upForce = Vector3.up * legsEnd.Count * 10f;
-                    crabBody.AddForce(downForce + upForce);
+                        Vector3 downForce = Vector3.down * 40f;
+                        Vector3 upForce = Vector3.up * legsEnd.Count * 10f;
+                        crabBody.AddForce(downForce + upForce);
+                    }
                 }
             }
 
@@ -106,39 +130,69 @@ public class Body : MonoBehaviour
         return dist;
     }
 
-    private void ResetCenterOfMess(string name)
-    {
-        int num = int.Parse(name);
-        Debug.Log(num);
-
-        Vector3 orgCenter = crabBody.centerOfMass;
-        Vector3 val = Vector3.zero;
-
-        switch(num)
+    public void LegStateChage(int num)
+    { 
+        legCount--;
+        num = int.Parse(legs[num].name.Split('_')[1]);
+        int preNum = 0;
+        switch (legCount)
         {
             case 0:
-                //x- y-
-                val = new Vector3(-1f, 0, -1f) * centerWeight;
+                state = LegState.No;
                 break;
 
             case 1:
-                //x+ y-
-                val = new Vector3(1f, 0, -1f) * centerWeight;
+                state = LegState.Leg1;
                 break;
 
             case 2:
-                //x- y+
-                val = new Vector3(-1f, 0, 1f) * centerWeight;
-                break;
+                {
+                    for (int i = 0; i < legs.Count; i++)
+                    {
+                        if (i != num && legsEnd[i].isDeath)
+                        {
+                            preNum = int.Parse(legs[i].name.Split('_')[1]);
+                        }
+                    }
 
-            case 3:
-                //x+ y+
-                val = new Vector3(1f, 0, 1f) * centerWeight;
+                    switch(preNum)
+                    {// 01 23 02 13
+                        case 0:
+                            {
+                                if (num == 1 || num == 2) state = LegState.Leg2_parallel;
+                                else state = LegState.Leg2_diagonal;
+                            }
+                            break;
+
+                        case 1:
+                            {
+                                if (num == 0 || num == 3) state = LegState.Leg2_parallel;
+                                else state = LegState.Leg2_diagonal;
+                            }
+                            break;
+
+                        case 2:
+                            {
+                                if (num == 0 || num == 3) state = LegState.Leg2_parallel;
+                                else state = LegState.Leg2_diagonal;
+                            }
+                            break;
+
+                        case 3:
+                            {
+                                if (num == 1 || num == 2) state = LegState.Leg2_parallel;
+                                else state = LegState.Leg2_diagonal;
+                            }
+                            break;
+                    }
+                }
+                break;
+            //case 3:
+            //    state = LegState.Leg3;
+            //    break;
+            default:
+                state = LegState.Normal;
                 break;
         }
-
-        orgCenter = orgCenter + val;
-        crabBody.centerOfMass = orgCenter;
-        Debug.Log(orgCenter);
     }
 }

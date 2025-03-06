@@ -1017,8 +1017,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 748647062}
   serializedVersion: 4
-  m_Mass: 0.0000001
-  m_Drag: 10
+  m_Mass: 1
+  m_Drag: 2
   m_AngularDrag: 10
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -1072,8 +1072,8 @@ GameObject:
   - component: {fileID: 788897401}
   - component: {fileID: 788897400}
   - component: {fileID: 788897404}
-  - component: {fileID: 788897403}
   - component: {fileID: 788897405}
+  - component: {fileID: 788897403}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -1188,12 +1188,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   legsEnd: []
   legs: []
-  legRigid: []
-  originalCenterOfMass: {x: 0, y: 0, z: 0}
   crabBody: {fileID: 0}
-  force: 60
-  legForce: 4
-  centerWeight: 10
+  state: 0
+  force: 500
 --- !u!54 &788897404
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1202,8 +1199,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 788897398}
   serializedVersion: 4
-  m_Mass: 2.29
-  m_Drag: 5
+  m_Mass: 1
+  m_Drag: 2
   m_AngularDrag: 10
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -2120,8 +2117,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1291718656}
   serializedVersion: 4
-  m_Mass: 0.0000001
-  m_Drag: 10
+  m_Mass: 1
+  m_Drag: 2
   m_AngularDrag: 10
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -2229,6 +2226,7 @@ MonoBehaviour:
   deathLeg: {fileID: 1685496853}
   body: {fileID: 788897403}
   legStart: {fileID: 0}
+  isDeath: 0
 --- !u!54 &1480199031
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2619,6 +2617,7 @@ MonoBehaviour:
   deathLeg: {fileID: 1685496853}
   body: {fileID: 788897403}
   legStart: {fileID: 0}
+  isDeath: 0
 --- !u!54 &1691011755
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3030,8 +3029,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1964614162}
   serializedVersion: 4
-  m_Mass: 0.0000001
-  m_Drag: 10
+  m_Mass: 1
+  m_Drag: 2
   m_AngularDrag: 10
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -3139,6 +3138,7 @@ MonoBehaviour:
   deathLeg: {fileID: 1685496853}
   body: {fileID: 788897403}
   legStart: {fileID: 0}
+  isDeath: 0
 --- !u!54 &2062372641
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3458,6 +3458,7 @@ MonoBehaviour:
   deathLeg: {fileID: 1685496853}
   body: {fileID: 788897403}
   legStart: {fileID: 0}
+  isDeath: 0
 --- !u!4 &1258663942487352885
 Transform:
   m_ObjectHideFlags: 0
@@ -3526,8 +3527,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1258663942487194133}
   serializedVersion: 4
-  m_Mass: 0.0000001
-  m_Drag: 10
+  m_Mass: 1
+  m_Drag: 2
   m_AngularDrag: 10
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
