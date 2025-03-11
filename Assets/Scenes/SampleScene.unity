@@ -160,8 +160,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 98989197}
-  - component: {fileID: 98989198}
+  - component: {fileID: 98989200}
   - component: {fileID: 98989199}
+  - component: {fileID: 98989198}
   m_Layer: 0
   m_Name: Controller
   m_TagString: Untagged
@@ -193,10 +194,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 98989196}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb8b9d390b0fa394282f145581a66aa1, type: 3}
+  m_Script: {fileID: 11500000, guid: 2a73b0aadd43f0c42827bce883cee61b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camState: 0
+  virtualCamera: {fileID: 430195751}
+  Target: {fileID: 1311466561}
+  look: {x: 0, y: 0}
+  zoom: 0
+  LockCameraPosition: 0
+  TopClamp: 70
+  BottomClamp: -10
+  CameraAngleOverride: 0
 --- !u!114 &98989199
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,15 +214,40 @@ MonoBehaviour:
   m_GameObject: {fileID: 98989196}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a73b0aadd43f0c42827bce883cee61b, type: 3}
+  m_Script: {fileID: 11500000, guid: fb8b9d390b0fa394282f145581a66aa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CinemachineCameraTarget: {fileID: 1311466561}
-  look: {x: 0, y: 0}
-  LockCameraPosition: 0
-  TopClamp: 70
-  BottomClamp: -30
-  CameraAngleOverride: 0
+  camState: 0
+--- !u!114 &98989200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 98989196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: e42f08ae552ecd94bb788eef0f7d7094, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: KeyboardMouse
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 330585545}
 --- !u!1 &173148481
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,7 +393,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 234043218}
-  - component: {fileID: 234043219}
   m_Layer: 0
   m_Name: 4Leg
   m_TagString: Untagged
@@ -389,36 +421,6 @@ Transform:
   - {fileID: 1807622476}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &234043219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 234043217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_NotificationBehavior: 0
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents: []
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: Player
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
 --- !u!1 &279898385
 GameObject:
   m_ObjectHideFlags: 0
@@ -571,7 +573,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.4811046, y: 1.375, z: 0.048719883}
+  m_LocalPosition: {x: 0, y: 1.36, z: -11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1049,7 +1051,7 @@ Transform:
   m_GameObject: {fileID: 430195746}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.36, z: -8}
+  m_LocalPosition: {x: 0, y: 1.36, z: -11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2850,7 +2852,7 @@ MonoBehaviour:
   ShoulderOffset: {x: 0, y: 0, z: 0}
   VerticalArmLength: 0
   CameraSide: 0.6
-  CameraDistance: 8
+  CameraDistance: 11
   CameraCollisionFilter:
     serializedVersion: 2
     m_Bits: 0

@@ -1,16 +1,9 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController instance;
-
-    void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-        }
-    }
 
     private PlayerState state_;
     public PlayerState state
@@ -29,6 +22,19 @@ public class PlayerController : MonoBehaviour
     }
 
     public CamState camState;
+
+    public void OnMove(InputValue val)
+    {
+        Debug.Log(val.Get<Vector2>());
+    }
+
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+    }
 
     // Update is called once per frame
     void Update()

@@ -1,14 +1,23 @@
+using Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
-    public GameObject CinemachineCameraTarget;
+    public CinemachineVirtualCamera virtualCamera;
+    private Cinemachine3rdPersonFollow camBody;
+    public GameObject Target;
 
     public Vector2 look; // input value
+    public float zoom; // input value
+    public float scrollSpeed = 1f;
 
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
     private const float _threshold = 0.01f;
+    private float minCamDist = 8f;
+    private float maxCamDist = 14f;
+
 
     public bool LockCameraPosition = false;
 
@@ -18,9 +27,11 @@ public class CameraController : MonoBehaviour
 
     void Start()
     {
-        _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
+        _cinemachineTargetYaw = Target.transform.rotation.eulerAngles.y;
 
         Vector3 angles = transform.eulerAngles;
+        camBody = virtualCamera.GetCinemachineComponent<Cinemachine3rdPersonFollow>();
+        
     }
 
     private void LateUpdate()
@@ -28,14 +39,24 @@ public class CameraController : MonoBehaviour
         CameraRotation();
     }
 
-    public void LookInput(Vector2 newLookDirection)
+    public void OnLook(InputValue value)
     {
-        look = newLookDirection;
+        look = value.Get<Vector2>();
+    }
+
+    public void OnZoom(InputValue value)
+    {
+        zoom = value.Get<float>();
+        float val = zoom * scrollSpeed + camBody.CameraDistance;
+        if(val < 14f && val > 8f)
+        {
+            camBody.CameraDistance += zoom * scrollSpeed;
+        }
     }
 
     private void CameraRotation()
     {
-        Debug.Log("CamRotation start");
+        //Debug.Log("CamRotation start");
         // if there is an input and camera position is not fixed
         if (look.sqrMagnitude >= _threshold && !LockCameraPosition)
         {
@@ -52,7 +73,7 @@ public class CameraController : MonoBehaviour
         _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
 
         // Cinemachine will follow this target
-        CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
+        Target.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
             _cinemachineTargetYaw, 0.0f);
     }
 
