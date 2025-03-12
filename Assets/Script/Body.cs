@@ -36,11 +36,11 @@ public class Body : MonoBehaviour
         switch(PlayerController.instance.state)
         {
             case PlayerState.Idle:
-                RigidStopControl(true);
+                RigidStopControl(false);
                 break;
 
-            case PlayerState.CanMove:
-                RigidStopControl(false);
+            case PlayerState.Stop:
+                RigidStopControl(true);
                 break;
         }
     }
@@ -203,23 +203,4 @@ public class Body : MonoBehaviour
         }
     }
 
-    Quaternion CalculateRectangleRotation(List<LegEndPoint> corners)
-    {
-        
-        // 1. 법선 벡터 계산
-        Vector3 edge1 = corners[1].transform.position - corners[0].transform.position;
-        Vector3 edge2 = corners[2].transform.position - corners[0].transform.position;
-        Vector3 normal = Vector3.Cross(edge1, edge2).normalized;
-
-        // 2. 중심점 계산
-        Vector3 center = (corners[0].transform.position + corners[1].transform.position + corners[2].transform.position + corners[3].transform.position) / 4f;
-
-        // 3. 로컬 좌표계 계산
-        Vector3 localX = edge1.normalized;
-        Vector3 localY = Vector3.Cross(normal, localX).normalized;
-        Vector3 localZ = normal;
-
-        // 4. 회전값 계산
-        return Quaternion.LookRotation(localZ, localY);
-    }
 }

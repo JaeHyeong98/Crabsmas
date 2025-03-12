@@ -201,6 +201,7 @@ MonoBehaviour:
   Target: {fileID: 1311466561}
   look: {x: 0, y: 0}
   zoom: 0
+  scrollSpeed: 1
   LockCameraPosition: 0
   TopClamp: 70
   BottomClamp: -10
@@ -1393,7 +1394,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   crabBody: {fileID: 0}
   state: 0
-  force: 300
+  force: 350
   poles: {fileID: 1502040119}
   legsEnd: []
   legs: []

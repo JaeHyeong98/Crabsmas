@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class LegTarget : MonoBehaviour
 {
@@ -15,6 +14,7 @@ public class LegTarget : MonoBehaviour
     public PointState curState;
     private Vector3 prePos;
     private Vector3 curPos;
+    private Rigidbody rb;
 
     private void Start()
     {
@@ -22,6 +22,8 @@ public class LegTarget : MonoBehaviour
 
         prePos = transform.position;
         curPos = transform.position;
+
+        rb = GetComponent<Rigidbody>();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -52,7 +54,6 @@ public class LegTarget : MonoBehaviour
         }
     }
 
-
     private void OnTriggerExit(Collider other)
     {
         Debug.Log("OnTriggerExit " + other.name);
@@ -71,5 +72,16 @@ public class LegTarget : MonoBehaviour
         Vector3 change = (curPos - prePos).normalized; //이동 방향
 
         body.MoveBody(change,this);
+    }
+
+    public void OnTakeOff()
+    {
+        rb.isKinematic = true;
+        transform.position = new Vector3(transform.position.x, 2f, transform.position.z);
+    }
+
+    public void OnLand()
+    {
+        rb.isKinematic = false;
     }
 }

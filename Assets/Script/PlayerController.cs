@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
         }
         set 
         {
-            if (state == PlayerState.Idle || state == PlayerState.CanMove || state == PlayerState.LegDown)
+            if (state == PlayerState.Idle || state == PlayerState.Stop || state == PlayerState.LegDown)
                 camState = CamState.Unlock;
             else
                 camState = CamState.Lock;
@@ -22,11 +22,6 @@ public class PlayerController : MonoBehaviour
     }
 
     public CamState camState;
-
-    public void OnMove(InputValue val)
-    {
-        Debug.Log(val.Get<Vector2>());
-    }
 
     void Awake()
     {
@@ -36,35 +31,42 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnMove(InputValue val)
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-            state = PlayerState.Idle;
-
-        if (Input.GetKeyUp(KeyCode.Space))
-            state = PlayerState.CanMove;
-
-        if(Input.GetKeyDown(KeyCode.Q))
-            state = PlayerState.Leg0Up;
-
-        if (Input.GetKeyDown(KeyCode.A))
-            state = PlayerState.Leg1Up;
-
-        if (Input.GetKeyDown(KeyCode.E))
-            state = PlayerState.Leg2Up;
-
-        if (Input.GetKeyDown(KeyCode.D))
-            state = PlayerState.Leg3Up;
-
-        if (Input.GetKeyUp(KeyCode.Q) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.E) || Input.GetKeyUp(KeyCode.D))
-            state = PlayerState.LegDown;
+        Vector2 vec = val.Get<Vector2>();
+        Debug.Log(vec);
+        if(vec.x == 0)
+        {
+            if (vec.y > 0)//q
+                state = PlayerState.Leg0Up;
+            else if (vec.y < 0)//a
+                state = PlayerState.Leg1Up;
+            else
+                state = PlayerState.LegDown;
+        }
+        else
+        {
+            if (vec.x > 0) //e
+                state = PlayerState.Leg2Up;
+            else //d
+                state = PlayerState.Leg3Up;
+        }
     }
+
+    public void OnStop(InputValue val)
+    {
+        Debug.Log("Stop " + val.isPressed);
+        if (val.isPressed)
+            state = PlayerState.Stop;
+        else
+            state = PlayerState.Idle;
+    }
+
 }
 public enum PlayerState
 {
     Idle,
-    CanMove,
+    Stop,
     Leg0Up,
     Leg1Up,
     Leg2Up,
@@ -76,10 +78,4 @@ public enum CamState
 {
     Lock,
     Unlock
-}
-
-public enum LegPointState
-{
-    Moveable,
-    UnMoveable
 }

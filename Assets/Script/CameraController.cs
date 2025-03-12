@@ -64,8 +64,6 @@ public class CameraController : MonoBehaviour
 
             _cinemachineTargetYaw += Input.GetAxis("Mouse X") * deltaTimeMultiplier;
             _cinemachineTargetPitch += Input.GetAxis("Mouse Y") * deltaTimeMultiplier;
-
-            Debug.Log("CamRotation yaw pitch");
         }
 
         // clamp our rotations so our values are limited 360 degrees
