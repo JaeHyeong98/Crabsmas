@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using static Body;
 
 public class LegTarget : MonoBehaviour
 {
@@ -24,6 +25,15 @@ public class LegTarget : MonoBehaviour
         curPos = transform.position;
 
         rb = GetComponent<Rigidbody>();
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (transform.name.Contains(i.ToString()))
+            {
+                body.legTargets[i] = this;
+                break;
+            }
+        }
     }
 
     private void OnCollisionEnter(Collision collision)

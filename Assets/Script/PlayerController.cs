@@ -4,6 +4,8 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController instance;
+    public Transform canvas;
+    private int lastKey = 0;
 
     private PlayerState state_;
     public PlayerState state
@@ -14,6 +16,7 @@ public class PlayerController : MonoBehaviour
         }
         set 
         {
+            state_ = value;
             if (state == PlayerState.Idle || state == PlayerState.Stop || state == PlayerState.LegDown)
                 camState = CamState.Unlock;
             else
@@ -34,28 +37,46 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputValue val)
     {
         Vector2 vec = val.Get<Vector2>();
-        Debug.Log(vec);
         if(vec.x == 0)
         {
             if (vec.y > 0)//q
+            {
+                canvas.GetChild(0).GetChild(0).gameObject.SetActive(true);
+                lastKey = 0;
                 state = PlayerState.Leg0Up;
+            }
             else if (vec.y < 0)//a
+            {
+                canvas.GetChild(1).GetChild(0).gameObject.SetActive(true);
+                lastKey = 1;
                 state = PlayerState.Leg1Up;
+            }
             else
+            {
+                canvas.GetChild(lastKey).GetChild(0).gameObject.SetActive(false);
                 state = PlayerState.LegDown;
+            }
         }
         else
         {
             if (vec.x > 0) //e
+            {
+                canvas.GetChild(2).GetChild(0).gameObject.SetActive(true);
+                lastKey = 2;
                 state = PlayerState.Leg2Up;
+            }
             else //d
+            {
+                canvas.GetChild(3).GetChild(0).gameObject.SetActive(true);
+                lastKey = 3;
                 state = PlayerState.Leg3Up;
+            }
         }
+        Debug.Log(state);
     }
 
     public void OnStop(InputValue val)
     {
-        Debug.Log("Stop " + val.isPressed);
         if (val.isPressed)
             state = PlayerState.Stop;
         else

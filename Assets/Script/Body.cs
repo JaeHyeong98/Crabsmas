@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,13 +22,22 @@ public class Body : MonoBehaviour
     private float standardDist = 4.5f;
 
     public Transform poles;
-    public List<LegEndPoint> legsEnd;
-    public List<Transform> legs;
+    public LegTarget[] legTargets;
+    public LegEndPoint[] legsEnd;
+    public Transform[] legs;
+    //public List<LegEndPoint> legsEnd;
+    //public List<Transform> legs;
     
     Coroutine coroutine;
 
+    public Action test;
+    private int lastMoveLeg;
+
     private void Awake()
     {
+        legTargets = new LegTarget[4];
+        legsEnd = new LegEndPoint[4];
+        legs = new Transform[4];
         crabBody = GetComponent<Rigidbody>();
     }
 
@@ -42,6 +52,29 @@ public class Body : MonoBehaviour
             case PlayerState.Stop:
                 RigidStopControl(true);
                 break;
+
+            case PlayerState.Leg0Up:
+                lastMoveLeg = 0;
+                legTargets[0].OnTakeOff();
+                break;
+
+            case PlayerState.Leg1Up:
+                lastMoveLeg = 1;
+                legTargets[1].OnTakeOff();
+                break;
+            case PlayerState.Leg2Up:
+                lastMoveLeg = 2;
+                legTargets[2].OnTakeOff();
+                break;
+            case PlayerState.Leg3Up:
+                lastMoveLeg = 3;
+                legTargets[3].OnTakeOff();
+                break;
+
+            case PlayerState.LegDown:
+                legTargets[lastMoveLeg].OnLand();
+                break;
+
         }
     }
 
@@ -53,7 +86,7 @@ public class Body : MonoBehaviour
         {
             case LegState.Normal:
                 upForce = Physics.gravity / 4 * -1 * crabBody.mass;
-                for (int i = 0; i<legs.Count; i++)
+                for (int i = 0; i<4; i++)
                 {
                     crabBody.AddForceAtPosition(upForce, legs[i].position);
                 }
@@ -97,7 +130,7 @@ public class Body : MonoBehaviour
                 break;
             }
 
-            for (int i = 0; i < legsEnd.Count; i++)
+            for (int i = 0; i < 4; i++)
             {
                 if (!legsEnd[i].isDeath)
                 {
@@ -108,7 +141,7 @@ public class Body : MonoBehaviour
                         LegStateChage(i);
 
                         Vector3 downForce = Vector3.down * 40f;
-                        Vector3 upForce = Vector3.up * legsEnd.Count * 10f;
+                        Vector3 upForce = Vector3.up * 4 * 10f;
                         crabBody.AddForce(downForce + upForce);
                     }
                 }
@@ -154,7 +187,7 @@ public class Body : MonoBehaviour
 
             case 2:
                 {
-                    for (int i = 0; i < legs.Count; i++)
+                    for (int i = 0; i < 4; i++)
                     {
                         if (i != num && legsEnd[i].isDeath)
                         {

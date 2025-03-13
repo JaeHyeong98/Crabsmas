@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class LegEndPoint : MonoBehaviour
@@ -15,8 +16,16 @@ public class LegEndPoint : MonoBehaviour
         legStart = transform.parent.parent.parent.parent.parent;
         if (!legStart.name.Contains("Leg"))
             legStart = legStart.transform.parent;
-        body.legsEnd.Add(this);
-        body.legs.Add(legStart);
+
+        for(int i = 0; i < 4; i++)
+        {
+            if(legStart.name.Contains(i.ToString()))
+            {
+                body.legsEnd[i] = this;
+                body.legs[i] = legStart;
+                break;
+            }
+        }
         //legStart.GetComponent<Rigidbody>().AddForce(transform.up);
     }
 
