@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Main;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Body : MonoBehaviour
@@ -30,7 +32,7 @@ public class Body : MonoBehaviour
     
     Coroutine coroutine;
 
-    public Action test;
+    private bool checkOrgPos;
     private int lastMoveLeg;
 
     private void Awake()
@@ -43,39 +45,8 @@ public class Body : MonoBehaviour
 
     private void Update()
     {
-        switch(PlayerController.instance.state)
-        {
-            case PlayerState.Idle:
-                RigidStopControl(false);
-                break;
-
-            case PlayerState.Stop:
-                RigidStopControl(true);
-                break;
-
-            case PlayerState.Leg0Up:
-                lastMoveLeg = 0;
-                legTargets[0].OnTakeOff();
-                break;
-
-            case PlayerState.Leg1Up:
-                lastMoveLeg = 1;
-                legTargets[1].OnTakeOff();
-                break;
-            case PlayerState.Leg2Up:
-                lastMoveLeg = 2;
-                legTargets[2].OnTakeOff();
-                break;
-            case PlayerState.Leg3Up:
-                lastMoveLeg = 3;
-                legTargets[3].OnTakeOff();
-                break;
-
-            case PlayerState.LegDown:
-                legTargets[lastMoveLeg].OnLand();
-                break;
-
-        }
+        MoveLeg();
+        MoveTarget();
     }
 
     private void FixedUpdate()
@@ -106,16 +77,54 @@ public class Body : MonoBehaviour
         poles.position = new Vector3(transform.position.x, 0f, transform.position.z);
     }
     
-    public void MoveBody(Vector3 vec,LegTarget lt)
+    private void MoveLeg() // 플레이어 스테이트에 따라 다리 들리는 기능
+    {
+        switch (GSC.playerController.state)
+        {
+            case PlayerState.Idle:
+                RigidStopControl(false);
+                break;
+
+            case PlayerState.Stop:
+                RigidStopControl(true);
+                break;
+
+            case PlayerState.Leg0Up:
+                lastMoveLeg = 0;
+                if (!legsEnd[0].isDeath)
+                    legTargets[0].OnTakeOff();
+                break;
+
+            case PlayerState.Leg1Up:
+                lastMoveLeg = 1;
+                if (!legsEnd[1].isDeath)
+                    legTargets[1].OnTakeOff();
+                break;
+            case PlayerState.Leg2Up:
+                lastMoveLeg = 2;
+                if (!legsEnd[2].isDeath)
+                    legTargets[2].OnTakeOff();
+                break;
+            case PlayerState.Leg3Up:
+                lastMoveLeg = 3;
+                if (!legsEnd[3].isDeath)
+                    legTargets[3].OnTakeOff();
+                break;
+
+            case PlayerState.LegDown:
+                legTargets[lastMoveLeg].OnLand();
+                break;
+
+        }
+    } 
+
+    public void MoveBody(Vector3 vec,LegTarget lt) // 몸 이동
     {
         coroutine = StartCoroutine(Move(vec, lt));
         Vector3 upForce = Physics.gravity / legCount * -1;
-
-        //Debug.Log(transform.localRotation);
-        //Debug.Log(CalculateRectangleRotation(legsEnd).normalized);
     }
 
-    IEnumerator Move(Vector3 vec, LegTarget lt)
+    IEnumerator Move(Vector3 vec, LegTarget lt) // 몸 이동 기능
     {
         Vector3 moveDir = vec.normalized;
         moveDir = new Vector3(moveDir.x, 0, moveDir.z);
@@ -152,7 +161,7 @@ public class Body : MonoBehaviour
         coroutine = null;
     }
 
-    public void RigidStopControl(bool val)
+    public void RigidStopControl(bool val) // 몸체 정지 on off
     {
         crabBody.isKinematic = val;
         if (coroutine != null)
@@ -162,7 +171,7 @@ public class Body : MonoBehaviour
         }
     }
 
-    public float DistanceCheck(Transform t)
+    public float DistanceCheck(Transform t) // 몸과 한 지점 간의 거리
     {
         Vector3 ltPos = new Vector3(t.position.x, 0, t.position.z);
         Vector3 pos = new Vector3(transform.position.x, 0, transform.position.z);
@@ -170,7 +179,7 @@ public class Body : MonoBehaviour
         return dist;
     }
 
-    public void LegStateChage(int num)
+    public void LegStateChage(int num) // 다리 갯수 상태 변화
     { 
         legCount--;
         num = int.Parse(legs[num].name.Split('_')[1]);
@@ -236,4 +245,29 @@ public class Body : MonoBehaviour
         }
     }
 
+    public void MoveTarget() // 마우스로 다리 이동 기능
+    {
+        if (GSC.playerController.moveState == LegMoveState.Move)
+        {
+            Vector3 orgPos = Vector3.zero;
+            if (!checkOrgPos)
+            {
+                orgPos = legTargets[lastMoveLeg].transform.localPosition;
+                checkOrgPos = true;
+            }
+
+            Vector3 val = new Vector3(GSC.inputController.look.y, 0f, GSC.inputController.look.x).normalized * 0.05f;
+            Vector3 nextPos = orgPos + val;
+
+            if (MathF.Abs(Vector3.Distance(nextPos, orgPos)) <= 1f)
+            {
+                legTargets[lastMoveLeg].transform.localPosition += val;
+            }
+        }
+        else
+        {
+            if(checkOrgPos) checkOrgPos = false;
+            return;
+        }
+    }
 }

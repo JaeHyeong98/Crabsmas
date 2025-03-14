@@ -1,6 +1,8 @@
 using Cinemachine;
+using Main;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.Rendering.DebugUI;
 
 public class CameraController : MonoBehaviour
 {
@@ -8,21 +10,25 @@ public class CameraController : MonoBehaviour
     private Cinemachine3rdPersonFollow camBody;
     public GameObject Target;
 
-    public Vector2 look; // input value
-    public float zoom; // input value
-    public float scrollSpeed = 1f; // zoom scroll speed
-    public bool camLock; // cam rotation lock check value
-
+    //cam
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
     private const float _threshold = 0.01f;
     
     //Camera rotation or zoom setting value
     public float minCamDist = 8f;
-    public float maxCamDist = 14f;
+    public float maxCamDist = 20f;
     public float TopClamp = 70.0f;
     public float BottomClamp = -30.0f;
     public float CameraAngleOverride = 0.0f;
+    public float scrollSpeed = 1f; // zoom scroll speed
+
+    public CamState camState;
+
+    private void Awake()
+    {
+        GSC.cameraController = this;
+    }
 
     void Start()
     {
@@ -38,41 +44,35 @@ public class CameraController : MonoBehaviour
         CameraRotation();
     }
 
-    public void OnLook(InputValue value)
+    public void ZoomFn(float zoom)
     {
-        look = value.Get<Vector2>();
-    }
-
-    public void OnZoom(InputValue value)
-    {
-        zoom = value.Get<float>();
         float val = zoom * scrollSpeed + camBody.CameraDistance;
-        if(val < maxCamDist && val > minCamDist)
+        if (val < maxCamDist && val > minCamDist)
         {
             camBody.CameraDistance += zoom * scrollSpeed;
         }
     }
 
-    public void OnCamLock(InputValue value)
+    public void CamLockUp(bool value)
     {
-        if (value.isPressed)
+        if (value)
         {
-            PlayerController.instance.camState = CamState.Unlock;
-            camLock = false;
+            camState = CamState.Unlock;
         }
         else
         {
-            PlayerController.instance.camState = CamState.Lock;
-            camLock = true;
+            camState = CamState.Lock;
         }
     }
 
     private void CameraRotation()
     {
-        if (camLock) return;
+        if (camState == CamState.Lock)
+            return;
+        
         //Debug.Log("CamRotation start");
         // if there is an input and camera position is not fixed
-        if (look.sqrMagnitude >= _threshold)
+        if (GSC.inputController.look.sqrMagnitude >= _threshold)
         {
             float deltaTimeMultiplier = 1.0f;
 
@@ -95,4 +95,10 @@ public class CameraController : MonoBehaviour
         if (lfAngle > 360f) lfAngle -= 360f;
         return Mathf.Clamp(lfAngle, lfMin, lfMax);
     }
+}
+
+public enum CamState
+{
+    Lock,
+    Unlock
 }
