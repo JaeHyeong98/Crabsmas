@@ -1,8 +1,6 @@
 using Cinemachine;
 using Main;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using static UnityEngine.Rendering.DebugUI;
 
 public class CameraController : MonoBehaviour
 {

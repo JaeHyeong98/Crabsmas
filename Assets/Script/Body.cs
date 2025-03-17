@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Main;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Body : MonoBehaviour
@@ -27,8 +25,6 @@ public class Body : MonoBehaviour
     public LegTarget[] legTargets;
     public LegEndPoint[] legsEnd;
     public Transform[] legs;
-    //public List<LegEndPoint> legsEnd;
-    //public List<Transform> legs;
     
     Coroutine coroutine;
 
@@ -37,10 +33,18 @@ public class Body : MonoBehaviour
 
     private void Awake()
     {
+        Init();
+    }
+
+    public void Init()
+    {
+        GSC.playerController.player = this;
+
         legTargets = new LegTarget[4];
         legsEnd = new LegEndPoint[4];
         legs = new Transform[4];
         crabBody = GetComponent<Rigidbody>();
+
     }
 
     private void Update()
@@ -51,32 +55,9 @@ public class Body : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 upForce = Vector3.zero;
-        //01 23 02 13
-        switch (state) 
-        {
-            case LegState.Normal:
-                upForce = Physics.gravity / 4 * -1 * crabBody.mass;
-                for (int i = 0; i<4; i++)
-                {
-                    crabBody.AddForceAtPosition(upForce, legs[i].position);
-                }
-                transform.localEulerAngles = Vector3.zero;
-                break;
-
-            case LegState.Leg2_parallel:
-                break;
-
-            case LegState.Leg2_diagonal:
-                break;
-
-            case LegState.No:
-                break;
-        }
-
-        poles.position = new Vector3(transform.position.x, 0f, transform.position.z);
+        GravityLegForce();
     }
-    
+
     private void MoveLeg() // 플레이어 스테이트에 따라 다리 들리는 기능
     {
         switch (GSC.playerController.state)
@@ -118,8 +99,37 @@ public class Body : MonoBehaviour
         }
     } 
 
+    private void GravityLegForce()
+    {
+        Vector3 upForce = Vector3.zero;
+        //01 23 02 13
+        switch (state)
+        {
+            case LegState.Normal:
+                upForce = Physics.gravity / 4 * -1 * crabBody.mass;
+                for (int i = 0; i < 4; i++)
+                {
+                    crabBody.AddForceAtPosition(upForce, legs[i].position);
+                }
+                transform.localEulerAngles = Vector3.zero;
+                break;
+
+            case LegState.Leg2_parallel:
+                break;
+
+            case LegState.Leg2_diagonal:
+                break;
+
+            case LegState.No:
+                break;
+        }
+
+        poles.position = new Vector3(transform.position.x, 0f, transform.position.z);
+    }
+    
     public void MoveBody(Vector3 vec,LegTarget lt) // 몸 이동
     {
+        Debug.Log("[Body] MoveBody");
         coroutine = StartCoroutine(Move(vec, lt));
         Vector3 upForce = Physics.gravity / legCount * -1;
     }
@@ -188,6 +198,7 @@ public class Body : MonoBehaviour
         {
             case 0:
                 state = LegState.No;
+                GSC.main.GameOver();
                 break;
 
             case 1:
@@ -247,7 +258,7 @@ public class Body : MonoBehaviour
 
     public void MoveTarget() // 마우스로 다리 이동 기능
     {
-        if (GSC.playerController.moveState == LegMoveState.Move)
+        if (GSC.playerController.moveState == LegMoveState.Move && !legsEnd[lastMoveLeg].isDeath)
         {
             Vector3 orgPos = Vector3.zero;
             if (!checkOrgPos)

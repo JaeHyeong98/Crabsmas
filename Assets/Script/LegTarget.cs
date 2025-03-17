@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using static Body;
+﻿using Main;
+using UnityEngine;
 
 public class LegTarget : MonoBehaviour
 {
@@ -15,10 +15,17 @@ public class LegTarget : MonoBehaviour
     public PointState curState;
     private Vector3 prePos;
     private Vector3 curPos;
+    private Vector3 preMove;
     private Rigidbody rb;
 
-    private void Start()
+    private void OnEnable()
     {
+        Init();
+    }
+
+    public void Init()
+    {
+        body = GSC.playerController.player;
         curState = PointState.Idle;
 
         prePos = transform.position;
@@ -79,9 +86,17 @@ public class LegTarget : MonoBehaviour
         body.RigidStopControl(false);
         curPos = transform.position;
         curState = PointState.Idle;
-        Vector3 change = (curPos - prePos).normalized; //이동 방향
+        
+        if (prePos == curPos)
+            body.MoveBody(preMove, this);
+        else
+        {
+            Vector3 change = (curPos - prePos).normalized; //이동 방향
+            body.MoveBody(change, this);
+            preMove = change;
+        }
 
-        body.MoveBody(change,this);
+        prePos = curPos;
     }
 
     public void OnTakeOff()

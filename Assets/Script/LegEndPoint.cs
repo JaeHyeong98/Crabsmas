@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class LegEndPoint : MonoBehaviour
@@ -10,23 +9,29 @@ public class LegEndPoint : MonoBehaviour
     public Transform legStart;
     public bool isDeath;
 
-    private void Start()
+
+    private void OnEnable()
+    {
+        Init();
+        //legStart.GetComponent<Rigidbody>().AddForce(transform.up);
+    }
+
+    public void Init()
     {
         isDeath = false;
         legStart = transform.parent.parent.parent.parent.parent;
         if (!legStart.name.Contains("Leg"))
             legStart = legStart.transform.parent;
 
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
-            if(legStart.name.Contains(i.ToString()))
+            if (legStart.name.Contains(i.ToString()))
             {
                 body.legsEnd[i] = this;
                 body.legs[i] = legStart;
                 break;
             }
         }
-        //legStart.GetComponent<Rigidbody>().AddForce(transform.up);
     }
 
 
@@ -52,6 +57,5 @@ public class LegEndPoint : MonoBehaviour
 
         rb.isKinematic = true;
         legStart.GetComponent<Collider>().enabled = false;
-        
     }
 }
