@@ -63,6 +63,11 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    public void SetTarget(Transform target)
+    {
+        virtualCamera.Follow = target;
+    }
+
     private void CameraRotation()
     {
         if (camState == CamState.Lock)

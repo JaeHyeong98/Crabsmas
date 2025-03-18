@@ -15,6 +15,8 @@ public class Body : MonoBehaviour
         No
     }
 
+    private bool isInit = false;
+
     public Rigidbody crabBody;  // 몸체 Rigidbody
     public LegState state;
     public float force = 100f;
@@ -33,18 +35,19 @@ public class Body : MonoBehaviour
 
     private void Awake()
     {
-        Init();
+        StartCoroutine(Init());
     }
 
-    public void Init()
+    public IEnumerator Init()
     {
-        GSC.playerController.player = this;
-
+        crabBody = GetComponent<Rigidbody>();
         legTargets = new LegTarget[4];
         legsEnd = new LegEndPoint[4];
         legs = new Transform[4];
-        crabBody = GetComponent<Rigidbody>();
 
+        yield return new WaitUntil(() => GSC.playerController != null);
+        GSC.playerController.player = this;
+        isInit = true;
     }
 
     private void Update()
@@ -60,6 +63,7 @@ public class Body : MonoBehaviour
 
     private void MoveLeg() // 플레이어 스테이트에 따라 다리 들리는 기능
     {
+        if (!isInit) return;
         switch (GSC.playerController.state)
         {
             case PlayerState.Idle:
@@ -109,7 +113,8 @@ public class Body : MonoBehaviour
                 upForce = Physics.gravity / 4 * -1 * crabBody.mass;
                 for (int i = 0; i < 4; i++)
                 {
-                    crabBody.AddForceAtPosition(upForce, legs[i].position);
+                    if (legs[i] != null)
+                        crabBody.AddForceAtPosition(upForce, legs[i].position);
                 }
                 transform.localEulerAngles = Vector3.zero;
                 break;
@@ -258,6 +263,7 @@ public class Body : MonoBehaviour
 
     public void MoveTarget() // 마우스로 다리 이동 기능
     {
+        if (!isInit) return;
         if (GSC.playerController.moveState == LegMoveState.Move && !legsEnd[lastMoveLeg].isDeath)
         {
             Vector3 orgPos = Vector3.zero;

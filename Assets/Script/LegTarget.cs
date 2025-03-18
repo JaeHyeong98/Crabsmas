@@ -1,4 +1,5 @@
-﻿using Main;
+﻿using System.Collections;
+using Main;
 using UnityEngine;
 
 public class LegTarget : MonoBehaviour
@@ -20,11 +21,14 @@ public class LegTarget : MonoBehaviour
 
     private void OnEnable()
     {
-        Init();
+        StartCoroutine(Init());
     }
 
-    public void Init()
+    public IEnumerator Init()
     {
+        Debug.Log("[LegTarget] Init Start");
+        yield return new WaitUntil(() => GSC.playerController != null && GSC.playerController.player != null);
+        Debug.Log("[LegTarget] waituntil end");
         body = GSC.playerController.player;
         curState = PointState.Idle;
 
@@ -68,6 +72,17 @@ public class LegTarget : MonoBehaviour
         {
             curState = PointState.Land; // 타겟이 땅에 내린 상태
             LandAction();
+        }
+
+        
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        Debug.Log("OnTriggerStay " + other.name);
+        if (other.CompareTag("Goal") && curState == PointState.Idle) // 다리가 결승점에 착지한 경우
+        {
+            GSC.main.GameClear();
         }
     }
 

@@ -1,10 +1,9 @@
 ﻿using System.Collections;
+using Main;
 using UnityEngine;
 
 public class LegEndPoint : MonoBehaviour
 {
-    [SerializeField]
-    public Transform deathLeg;
     public Body body;
     public Transform legStart;
     public bool isDeath;
@@ -12,12 +11,13 @@ public class LegEndPoint : MonoBehaviour
 
     private void OnEnable()
     {
-        Init();
+        StartCoroutine(Init());
         //legStart.GetComponent<Rigidbody>().AddForce(transform.up);
     }
 
-    public void Init()
+    public IEnumerator Init()
     {
+        yield return new WaitUntil(() => GSC.playerController != null && GSC.playerController.player != null);
         isDeath = false;
         legStart = transform.parent.parent.parent.parent.parent;
         if (!legStart.name.Contains("Leg"))
@@ -45,7 +45,7 @@ public class LegEndPoint : MonoBehaviour
         isDeath = true;
         body.RigidStopControl(true);
         body.RigidStopControl(false);
-        legStart.parent = deathLeg;
+        legStart.parent = GSC.main.deathLegs;
         Destroy(legStart.GetComponent<FixedJoint>());
 
         Rigidbody rb = legStart.GetComponent<Rigidbody>();

@@ -47,6 +47,11 @@ public class UIController : MonoBehaviour
     public void GameResultBtn(bool val)
     {
         intro.gameObject.SetActive(val);
+        if (!val) // failed -> retry
+        {
+            GSC.main.canControl = true;
+            GSC.cameraController.camState = CamState.Unlock;
+        }
 
         clear.gameObject.SetActive(false);
         failed.gameObject.SetActive(false);
@@ -61,5 +66,6 @@ public class UIController : MonoBehaviour
     {
         intro.gameObject.SetActive(false);
         GSC.main.canControl = true;
+        GSC.cameraController.camState = CamState.Unlock;
     }
 }
