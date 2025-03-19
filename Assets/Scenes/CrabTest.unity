@@ -13663,6 +13663,10 @@ PrefabInstance:
       propertyPath: crabBody
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6928735033058513538, guid: db38c6ba63be64b46a171a4cb44e3e94, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     - target: {fileID: 7046586237370046509, guid: db38c6ba63be64b46a171a4cb44e3e94, type: 3}
       propertyPath: m_Name
       value: CrabTest

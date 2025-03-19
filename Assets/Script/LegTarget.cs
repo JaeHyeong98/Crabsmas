@@ -18,6 +18,7 @@ public class LegTarget : MonoBehaviour
     private Vector3 curPos;
     private Vector3 preMove;
     private Rigidbody rb;
+    private Collider collider;
 
     private void OnEnable()
     {
@@ -30,6 +31,7 @@ public class LegTarget : MonoBehaviour
         yield return new WaitUntil(() => GSC.playerController != null && GSC.playerController.player != null);
         Debug.Log("[LegTarget] waituntil end");
         body = GSC.playerController.player;
+        collider = transform.GetComponent<Collider>();
         curState = PointState.Idle;
 
         prePos = transform.position;
@@ -123,5 +125,11 @@ public class LegTarget : MonoBehaviour
     public void OnLand()
     {
         rb.isKinematic = false;
+    }
+
+    public void KinematicOnOff(bool val)
+    {
+        transform.gameObject.layer = 6;
+        rb.isKinematic = val;
     }
 }

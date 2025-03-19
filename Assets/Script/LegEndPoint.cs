@@ -8,7 +8,6 @@ public class LegEndPoint : MonoBehaviour
     public Transform legStart;
     public bool isDeath;
 
-
     private void OnEnable()
     {
         StartCoroutine(Init());
@@ -56,6 +55,16 @@ public class LegEndPoint : MonoBehaviour
         yield return new WaitForSecondsRealtime(1.5f);
 
         rb.isKinematic = true;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (legStart.name.Contains(i.ToString()))
+            {
+                body.legTargets[i].KinematicOnOff(false);
+                break;
+            }
+        }
+        
         legStart.GetComponent<Collider>().enabled = false;
     }
 }
