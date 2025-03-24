@@ -5,8 +5,13 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     public CinemachineVirtualCamera virtualCamera;
+    public CinemachineVirtualCamera introCamera;
     private Cinemachine3rdPersonFollow camBody;
     public GameObject Target;
+
+    //intro
+    public Animator introCamAni;
+    public bool watchAni = false;
 
     //cam
     private float _cinemachineTargetYaw;
@@ -26,6 +31,9 @@ public class CameraController : MonoBehaviour
     private void Awake()
     {
         GSC.cameraController = this;
+
+        virtualCamera.gameObject.SetActive(false);
+        introCamera.gameObject.SetActive(true);
     }
 
     void Start()
@@ -34,12 +42,26 @@ public class CameraController : MonoBehaviour
 
         Vector3 angles = transform.eulerAngles;
         camBody = virtualCamera.GetCinemachineComponent<Cinemachine3rdPersonFollow>();
+
+        introCamAni = introCamera.transform.GetComponent<Animator>();
         
     }
 
     private void LateUpdate()
     {
         CameraRotation();
+    }
+
+    public void IntroCamAni()
+    {
+        introCamAni.SetTrigger("intro");
+        watchAni = true;
+    }
+
+    public void CamChange()
+    {
+        virtualCamera.gameObject.SetActive(true);
+        introCamera.gameObject.SetActive(false);
     }
 
     public void ZoomFn(float zoom)

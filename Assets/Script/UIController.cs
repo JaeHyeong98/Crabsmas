@@ -1,3 +1,4 @@
+using System.Collections;
 using Main;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,6 +30,20 @@ public class UIController : MonoBehaviour
             {
                 GSC.main.canControl = true;
             }
+    }
+
+    private void Start()
+    {
+#if UNITY_EDITOR
+        if (!intro.gameObject.activeSelf)
+        {
+            GSC.cameraController.CamChange();
+            GSC.main.canControl = true;
+            GSC.cameraController.camState = CamState.Unlock;
+        }
+#else
+    intro.gameObject.SetActive(true);
+#endif
     }
 
 
@@ -65,7 +80,20 @@ public class UIController : MonoBehaviour
     public void StartBtn()
     {
         intro.gameObject.SetActive(false);
-        GSC.main.canControl = true;
-        GSC.cameraController.camState = CamState.Unlock;
+        if (!GSC.cameraController.watchAni)
+            GSC.cameraController.IntroCamAni();
+        else
+        {
+            GSC.main.canControl = true;
+            GSC.cameraController.camState = CamState.Unlock;
+        }
+    }
+
+    IEnumerator StartBtnFn()
+    {
+        yield return null;
+        //GSC.cameraController.introCamAni.GetCurrentAnimatorClipInfo(0)[0].clip.
+
+        //yield return new WaitUntil(() => );
     }
 }
