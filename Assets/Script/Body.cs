@@ -48,6 +48,9 @@ public class Body : MonoBehaviour
         yield return new WaitUntil(() => GSC.playerController != null);
         GSC.playerController.player = this;
         isInit = true;
+
+        yield return new WaitUntil(() => GSC.cameraController != null);
+        GSC.cameraController.Target = transform.Find("CamTarget").gameObject;
     }
 
     private void Update()

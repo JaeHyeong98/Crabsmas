@@ -10,6 +10,7 @@ public class UIController : MonoBehaviour
     public Transform intro;
     public Transform clear;
     public Transform failed;
+    public Transform option;
 
     private void Awake()
     {
@@ -22,9 +23,11 @@ public class UIController : MonoBehaviour
 
         clear = canvas.Find("Clear").transform;
         failed = canvas.Find("Failed").transform;
+        failed = canvas.Find("Option").transform;
 
         clear.gameObject.SetActive(false);
         failed.gameObject.SetActive(false);
+        option.gameObject.SetActive(false);
 
         if (!intro.gameObject.activeSelf)
             {
@@ -89,11 +92,18 @@ public class UIController : MonoBehaviour
         }
     }
 
-    IEnumerator StartBtnFn()
+    public void OptionSaveClose()
     {
-        yield return null;
-        //GSC.cameraController.introCamAni.GetCurrentAnimatorClipInfo(0)[0].clip.
+        //option Setting
+        PlayerPrefs.SetFloat("MasterVol", 1);
+        PlayerPrefs.SetFloat("BGMVol", 1);
+        PlayerPrefs.SetFloat("EffVol", 1);
 
-        //yield return new WaitUntil(() => );
+        OptionClose();
+    }
+
+    public void OptionClose()
+    {
+        option.gameObject.SetActive(false);
     }
 }

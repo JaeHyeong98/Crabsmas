@@ -48,6 +48,20 @@ public class InputController : MonoBehaviour
     }
     private bool camLock_;
 
+    public bool option
+    {
+        get
+        {
+            return option_;
+        }
+        set
+        {
+            option_ = value;
+            
+        }
+    }
+    private bool option_;
+
     private void Awake()
     {
         GSC.inputController = this;
@@ -75,6 +89,12 @@ public class InputController : MonoBehaviour
     {
         if (!GSC.main.canControl) return;
         camLock = value.isPressed;
+    }
+
+    public void OnOption(InputValue value)
+    {
+        if (!GSC.main.canControl) return;
+        option = value.isPressed;
     }
 
 }
