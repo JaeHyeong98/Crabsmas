@@ -92,7 +92,7 @@ public class CameraController : MonoBehaviour
 
     private void CameraRotation()
     {
-        if (camState == CamState.Lock)
+        if (camState == CamState.Lock || GSC.uiController.optionCon.isOptionOpen)
             return;
         
         //Debug.Log("CamRotation start");

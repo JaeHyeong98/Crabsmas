@@ -26,9 +26,9 @@ public class LegTarget : MonoBehaviour
 
     public IEnumerator Init()
     {
-        Debug.Log("[LegTarget] Init Start");
+        //Debug.Log("[LegTarget] Init Start");
         yield return new WaitUntil(() => GSC.playerController != null && GSC.playerController.player != null);
-        Debug.Log("[LegTarget] waituntil end");
+        //Debug.Log("[LegTarget] waituntil end");
         body = GSC.playerController.player;
         curState = PointState.Idle;
 
@@ -98,6 +98,7 @@ public class LegTarget : MonoBehaviour
 
     private void LandAction()
     {
+        GSC.audioController.PlaySound2D("Click");
         body.RigidStopControl(false);
         curPos = transform.position;
         curState = PointState.Idle;

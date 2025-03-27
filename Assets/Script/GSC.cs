@@ -9,6 +9,7 @@ namespace Main
         public static CameraController cameraController;
         public static InputController inputController;
         public static UIController uiController;
+        public static AudioController audioController;
     }
 }
 

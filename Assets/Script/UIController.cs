@@ -1,4 +1,3 @@
-using System.Collections;
 using Main;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,24 +9,25 @@ public class UIController : MonoBehaviour
     public Transform intro;
     public Transform clear;
     public Transform failed;
-    public Transform option;
+    
+    public OptionController optionCon;
 
     private void Awake()
     {
         GSC.uiController = this;
 
+        optionCon = transform.GetComponent<OptionController>();
         canvas = this.transform;
+
         keyGuide = canvas.Find("KeyGuide").transform;
         intro = canvas.Find("Intro").transform;
         intro.GetChild(0).GetChild(0).GetComponent<Button>().onClick.AddListener(StartBtn);
 
         clear = canvas.Find("Clear").transform;
         failed = canvas.Find("Failed").transform;
-        failed = canvas.Find("Option").transform;
 
         clear.gameObject.SetActive(false);
         failed.gameObject.SetActive(false);
-        option.gameObject.SetActive(false);
 
         if (!intro.gameObject.activeSelf)
             {
@@ -90,20 +90,5 @@ public class UIController : MonoBehaviour
             GSC.main.canControl = true;
             GSC.cameraController.camState = CamState.Unlock;
         }
-    }
-
-    public void OptionSaveClose()
-    {
-        //option Setting
-        PlayerPrefs.SetFloat("MasterVol", 1);
-        PlayerPrefs.SetFloat("BGMVol", 1);
-        PlayerPrefs.SetFloat("EffVol", 1);
-
-        OptionClose();
-    }
-
-    public void OptionClose()
-    {
-        option.gameObject.SetActive(false);
     }
 }

@@ -1,12 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
+using Main;
 using UnityEngine;
 using UnityEngine.Audio;
 
 public enum SoundType
 {
     BGM,
-    EFFECT,
+    Eff,
 }
 
 public class AudioController : MonoBehaviour
@@ -27,6 +27,11 @@ public class AudioController : MonoBehaviour
     [SerializeField] private AudioClip[] mPreloadClips;
 
     private List<TemporarySoundPlayer> mInstantiatedSounds;
+
+    private void Awake()
+    {
+        GSC.audioController = this;
+    }
 
     private void Start()
     {
@@ -86,11 +91,11 @@ public class AudioController : MonoBehaviour
     /// </summary>
     /// <param name="clipName">오디오 클립 이름</param>
     /// <param name="type">오디오 유형(BGM, EFFECT 등.)</param>
-    public void PlaySound2D(string clipName, float delay = 0f, bool isLoop = false, SoundType type = SoundType.EFFECT)
+    public void PlaySound2D(string clipName, float delay = 0f, bool isLoop = false, SoundType type = SoundType.Eff)
     {
         GameObject obj = new GameObject("TemporarySoundPlayer 2D");
         TemporarySoundPlayer soundPlayer = obj.AddComponent<TemporarySoundPlayer>();
-    
+
         //루프를 사용하는경우 사운드를 저장한다.
         if (isLoop) { AddToList(soundPlayer); }
     
@@ -107,7 +112,7 @@ public class AudioController : MonoBehaviour
     /// <param name="attachToTarget"></param>
     /// <param name="minDistance"></param>
     /// <param name="maxDistance"></param>
-    public void PlaySound3D(string clipName, Transform audioTarget, float delay = 0f, bool isLoop = false, SoundType type = SoundType.EFFECT, bool attachToTarget = true, float minDistance = 0.0f, float maxDistance = 50.0f)
+    public void PlaySound3D(string clipName, Transform audioTarget, float delay = 0f, bool isLoop = false, SoundType type = SoundType.Eff, bool attachToTarget = true, float minDistance = 0.0f, float maxDistance = 50.0f)
     {
         GameObject obj = new GameObject("TemporarySoundPlayer 3D");
         obj.transform.localPosition = audioTarget.transform.position;
@@ -126,7 +131,7 @@ public class AudioController : MonoBehaviour
     public void InitVolumes(float bgm, float effect)
     {
         SetVolume(SoundType.BGM, bgm);
-        SetVolume(SoundType.EFFECT, effect);
+        SetVolume(SoundType.Eff, effect);
     }
 
     //옵션을 변경할 때 소리의 불륨을 조절하는 함수

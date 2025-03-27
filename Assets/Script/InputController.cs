@@ -57,10 +57,28 @@ public class InputController : MonoBehaviour
         set
         {
             option_ = value;
-            
+            if (option_)
+                GSC.uiController.optionCon.OptionOpen();
         }
     }
     private bool option_;
+
+    public bool click
+    {
+        get
+        {
+            return click_;
+        }
+        set
+        {
+            click_ = value;
+            if(click_)
+            {
+                GSC.audioController.PlaySound2D("Click");
+            }
+        }
+    }
+    private bool click_;
 
     private void Awake()
     {
@@ -97,4 +115,8 @@ public class InputController : MonoBehaviour
         option = value.isPressed;
     }
 
+    public void OnClick(InputValue value)
+    {
+        click = value.isPressed;
+    }
 }
