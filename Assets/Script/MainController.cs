@@ -14,6 +14,9 @@ public class MainController : MonoBehaviour
     {
         GSC.main = this;
         canControl = false;
+
+        if (PlayerPrefs.GetInt("fullScreen") == 1)
+            Screen.fullScreen = true;
     }
 
     public void GameClear()

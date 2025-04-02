@@ -25,6 +25,7 @@ public class OptionController : MonoBehaviour
     public void OptionOpen()
     {
         sound.SoundUIInit();
+        resolution.Init();
         option.gameObject.SetActive(true);
         isOptionOpen = true;
     }
@@ -32,6 +33,7 @@ public class OptionController : MonoBehaviour
     public void OptionSaveClose()
     {
         sound.SoundOptionSave();
+        resolution.Save();
         OptionClose();
     }
 
