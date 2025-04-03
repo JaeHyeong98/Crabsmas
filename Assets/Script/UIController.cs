@@ -9,6 +9,7 @@ public class UIController : MonoBehaviour
     public Transform intro;
     public Transform clear;
     public Transform failed;
+    public Transform pauseUI;
     
     public OptionController optionCon;
 
@@ -25,9 +26,11 @@ public class UIController : MonoBehaviour
 
         clear = canvas.Find("Clear").transform;
         failed = canvas.Find("Failed").transform;
+        pauseUI = canvas.Find("Pause").transform;
 
         clear.gameObject.SetActive(false);
         failed.gameObject.SetActive(false);
+        pauseUI.gameObject.SetActive(false);
 
         if (!intro.gameObject.activeSelf)
             {
@@ -47,6 +50,15 @@ public class UIController : MonoBehaviour
 #else
     intro.gameObject.SetActive(true);
 #endif
+    }
+
+    public void PauseUI()
+    {
+        pauseUI.gameObject.SetActive(!pauseUI.gameObject.activeSelf);
+        if (Time.timeScale > 0f)
+            Time.timeScale = 0f;
+        else
+            Time.timeScale = 1f;
     }
 
 

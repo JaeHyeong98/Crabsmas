@@ -57,8 +57,7 @@ public class InputController : MonoBehaviour
         set
         {
             option_ = value;
-            if (option_)
-                GSC.uiController.optionCon.OptionOpen();
+            GSC.uiController.PauseUI();
         }
     }
     private bool option_;
@@ -83,36 +82,36 @@ public class InputController : MonoBehaviour
     private void Awake()
     {
         GSC.inputController = this;
+        option_ = false;
     }
 
     public void OnLook(InputValue value)
     {
-        if (!GSC.main.canControl) return;
+        if (!GSC.main.canControl || option) return;
         look = value.Get<Vector2>();
     }
 
     public void OnMove(InputValue val)
     {
-        if (!GSC.main.canControl) return;
+        if (!GSC.main.canControl || option) return;
         move = val.Get<Vector2>();
     }
 
     public void OnZoom(InputValue value)
     {
-        if (!GSC.main.canControl) return;
+        if (!GSC.main.canControl || option) return;
         zoom = value.Get<float>();
     }
 
     public void OnCamLock(InputValue value)
     {
-        if (!GSC.main.canControl) return;
+        if (!GSC.main.canControl || option) return;
         camLock = value.isPressed;
     }
 
     public void OnOption(InputValue value)
     {
-        if (!GSC.main.canControl) return;
-        option = value.isPressed;
+        option = !option;
     }
 
     public void OnClick(InputValue value)

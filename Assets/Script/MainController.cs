@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using Main;
-using UnityEditor;
 using UnityEngine;
 
 public class MainController : MonoBehaviour
@@ -56,5 +53,14 @@ public class MainController : MonoBehaviour
         GSC.playerController.player = player.transform.Find("Body").GetComponent<Body>();
         GSC.cameraController.SetTarget(GSC.playerController.player.transform.Find("CamTarget"));
         GSC.playerController.player.Init();
+    }
+
+    public void ExitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit(); // 어플리케이션 종료
+#endif
     }
 }
