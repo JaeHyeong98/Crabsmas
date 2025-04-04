@@ -1,11 +1,10 @@
-using System.Collections.Generic;
-using TMPro;
+using Main;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ResolutionController : MonoBehaviour
 {
-    public Dropdown resolutionDropdown;
+    public MyDropDown resolutionDropdown;
     public Toggle fullscreenToggle;
 
     private string resolutionString;
@@ -13,11 +12,11 @@ public class ResolutionController : MonoBehaviour
     void Start()
     {
         fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
-        
     }
 
     public void SetResolution()
     {
+        GSC.audioController.PlaySound2D("Click");
         int idx = resolutionDropdown.value;
 
         string resolution = resolutionDropdown.options[idx].text;
@@ -33,6 +32,7 @@ public class ResolutionController : MonoBehaviour
 
     public void SetFullscreen(bool val)
     {
+        GSC.audioController.PlaySound2D("Click");
         Screen.fullScreen = fullscreenToggle.isOn;
     }
 

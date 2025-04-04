@@ -71,10 +71,6 @@ public class InputController : MonoBehaviour
         set
         {
             click_ = value;
-            if(click_)
-            {
-                GSC.audioController.PlaySound2D("Click");
-            }
         }
     }
     private bool click_;
@@ -118,4 +114,5 @@ public class InputController : MonoBehaviour
     {
         click = value.isPressed;
     }
+
 }

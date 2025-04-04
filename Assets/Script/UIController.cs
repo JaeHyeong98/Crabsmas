@@ -54,13 +54,13 @@ public class UIController : MonoBehaviour
 
     public void PauseUI()
     {
+        if (GSC.uiController.optionCon.isOptionOpen) return;
         pauseUI.gameObject.SetActive(!pauseUI.gameObject.activeSelf);
         if (Time.timeScale > 0f)
             Time.timeScale = 0f;
         else
             Time.timeScale = 1f;
     }
-
 
     public void GameResult(bool val)
     {
