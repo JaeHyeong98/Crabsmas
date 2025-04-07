@@ -7,7 +7,7 @@ public class SoundOptionController : MonoBehaviour
     public Slider[] sliders = new Slider[3];
     public InputField[] inputs = new InputField[3];
 
-    private void Start()
+    private void Awake()
     {
         Transform sounds = transform;
         for (int i = 0; i < 3; i++)
