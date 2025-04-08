@@ -14,6 +14,11 @@ public class MainController : MonoBehaviour
 
         if (PlayerPrefs.GetInt("fullScreen") == 1)
             Screen.fullScreen = true;
+
+        if(PlayerPrefs.GetString("resolution") == null || PlayerPrefs.GetString("resolution").Equals(""))
+        {
+            PlayerPrefs.SetString("resolution", "1920 x 1080");
+        }
     }
 
     public void GameClear()
@@ -57,6 +62,7 @@ public class MainController : MonoBehaviour
 
     public void ExitGame()
     {
+        GSC.audioController.PlaySound2D("Click");
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else

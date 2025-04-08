@@ -1,6 +1,5 @@
 using Main;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class OptionController : MonoBehaviour
 {
@@ -25,24 +24,30 @@ public class OptionController : MonoBehaviour
 
     public void OptionOpen()
     {
+        GSC.audioController.PlaySound2D("Click");
         option.gameObject.SetActive(true);
         sound.SoundUIInit();
         resolution.Init();
         isOptionOpen = true;
     }
 
-    public void OptionSaveClose()
-    {
-        sound.SoundOptionSave();
-        resolution.Save();
-        OptionClose();
-    }
 
-    public void OptionClose()
+    public void OptionClose(bool val)
     {
         GSC.audioController.PlaySound2D("Click");
-        option.gameObject.SetActive(false);
         isOptionOpen = false;
+
+        if(val) // save close
+        {
+            sound.Save();
+            resolution.Save();
+        }
+        else // just close
+        {
+            resolution.Close();
+        }
+
+        option.gameObject.SetActive(false);
     }
 
 }

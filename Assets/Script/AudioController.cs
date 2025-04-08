@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Main;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -11,7 +12,7 @@ public enum SoundType
 
 public class AudioController : MonoBehaviour
 {
-    [SerializeField] private AudioMixer mAudioMixer;
+    public AudioMixer mAudioMixer;
 
     //옵션에서 설정된 현재 배경음악과 효과 사운드의 불륨이다. 효과는 BGM을 제외한 모든 소리의 불륨을 담당한다.
     private float mCurrentBGMVolume, mCurrentEffectVolume;
@@ -93,8 +94,26 @@ public class AudioController : MonoBehaviour
     /// <param name="type">오디오 유형(BGM, EFFECT 등.)</param>
     public void PlaySound2D(string clipName, float delay = 0f, bool isLoop = false, SoundType type = SoundType.Eff)
     {
-        GameObject obj = new GameObject("TemporarySoundPlayer 2D");
-        TemporarySoundPlayer soundPlayer = obj.AddComponent<TemporarySoundPlayer>();
+        GameObject obj = transform.Find("TemporarySoundPlayer 2D")?.gameObject;
+        TemporarySoundPlayer soundPlayer = null;
+
+        if (obj == null)
+        {
+            obj = new GameObject("TemporarySoundPlayer 2D");
+            soundPlayer = obj.AddComponent<TemporarySoundPlayer>();
+        }
+        else if(obj.GetComponent<TemporarySoundPlayer>() != null)
+        {
+
+        }
+
+        
+        obj.transform.SetParent(transform, false);
+
+        soundPlayer = obj.GetComponent<TemporarySoundPlayer>();
+
+        if(soundPlayer == null)
+            
 
         //루프를 사용하는경우 사운드를 저장한다.
         if (isLoop) { AddToList(soundPlayer); }

@@ -20,13 +20,11 @@ public class ResolutionController : MonoBehaviour
         int idx = resolutionDropdown.value;
 
         string resolution = resolutionDropdown.options[idx].text;
+        resolutionString = resolution;
 
         int width = int.Parse(resolution.Split(" x ")[0]);
         int height = int.Parse(resolution.Split(" x ")[1]);
 
-        resolutionString = resolution;
-        Debug.Log(resolution);
-        
         Screen.SetResolution(width, height, Screen.fullScreen);
     }
 
@@ -40,10 +38,15 @@ public class ResolutionController : MonoBehaviour
     {
         if (PlayerPrefs.GetInt("fullScreen") == 1)
             fullscreenToggle.isOn = true;
+        else
+            fullscreenToggle.isOn = false;
 
-        for(int i = 0; i < resolutionDropdown.options.Count; i++)
+        string resolutionStringVal = PlayerPrefs.GetString("resolution");
+        resolutionString = resolutionStringVal;
+
+        for (int i = 0; i < resolutionDropdown.options.Count; i++)
         {
-            if (resolutionDropdown.options[i].text.Equals(resolutionString))
+            if (resolutionDropdown.options[i].text.Equals(resolutionStringVal))
                 resolutionDropdown.value = i;
         }
     }
@@ -55,6 +58,16 @@ public class ResolutionController : MonoBehaviour
         else
             PlayerPrefs.SetInt("fullScreen", 0);
 
+        Debug.Log(resolutionString);
         PlayerPrefs.SetString("resolution", resolutionString);
+    }
+
+    public void Close()
+    {
+        string resolutionStringVal = PlayerPrefs.GetString("resolution");
+        Debug.Log(resolutionStringVal);
+        int width = int.Parse(resolutionStringVal.Split(" x ")[0]);
+        int height = int.Parse(resolutionStringVal.Split(" x ")[1]);
+        Screen.SetResolution(width, height, Screen.fullScreen);
     }
 }

@@ -46,7 +46,7 @@ public class SoundOptionController : MonoBehaviour
         }
     }
 
-    public void SoundOptionSave()
+    public void Save()
     {
         //option Setting
         PlayerPrefs.SetFloat("MasterVol", sliders[0].value);
