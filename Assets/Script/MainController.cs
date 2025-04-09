@@ -19,6 +19,13 @@ public class MainController : MonoBehaviour
         {
             PlayerPrefs.SetString("resolution", "1920 x 1080");
         }
+
+        if(PlayerPrefs.GetString("Master").Equals(""))
+        {
+            PlayerPrefs.SetString("Master", "80");
+            PlayerPrefs.SetString("BGM", "80");
+            PlayerPrefs.SetString("Eff", "80");
+        }
     }
 
     public void GameClear()

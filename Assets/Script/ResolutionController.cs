@@ -58,7 +58,7 @@ public class ResolutionController : MonoBehaviour
         else
             PlayerPrefs.SetInt("fullScreen", 0);
 
-        Debug.Log(resolutionString);
+        //Debug.Log(resolutionString);
         PlayerPrefs.SetString("resolution", resolutionString);
     }
 

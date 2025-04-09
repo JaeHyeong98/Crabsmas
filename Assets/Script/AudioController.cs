@@ -6,6 +6,7 @@ using UnityEngine.Audio;
 
 public enum SoundType
 {
+    Master,
     BGM,
     Eff,
 }
