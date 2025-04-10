@@ -13898,6 +13898,7 @@ MonoBehaviour:
   mAudioMixer: {fileID: 24100000, guid: f5cfffb73902dc142a7869811c4c24fe, type: 2}
   mPreloadClips:
   - {fileID: 8300000, guid: 70d1f1a2ace4e3640970a05bb5068c47, type: 3}
+  - {fileID: 8300000, guid: 2ef353e66abfa2c4b98db244326d4e00, type: 3}
 --- !u!82 &1529723233
 AudioSource:
   m_ObjectHideFlags: 0

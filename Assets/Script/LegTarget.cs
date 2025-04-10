@@ -98,7 +98,8 @@ public class LegTarget : MonoBehaviour
 
     private void LandAction()
     {
-        GSC.audioController.PlaySound2D("Click");
+        //GSC.audioController.PlaySound2D("Click");
+        GSC.audioController.PlaySound3D("Walk",transform,0,false,SoundType.Eff,true,8,80);
         body.RigidStopControl(false);
         curPos = transform.position;
         curState = PointState.Idle;
