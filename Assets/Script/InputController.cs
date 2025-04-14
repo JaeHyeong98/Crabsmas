@@ -75,6 +75,19 @@ public class InputController : MonoBehaviour
     }
     private bool click_;
 
+    public float upDown
+    {
+        get
+        {
+            return upDown_;
+        }
+        set
+        {
+            upDown_ = value;
+        }
+    }
+    private float upDown_;
+
     private void Awake()
     {
         GSC.inputController = this;
@@ -115,4 +128,10 @@ public class InputController : MonoBehaviour
         click = value.isPressed;
     }
 
+    public void OnUpDown(InputValue value)
+    {
+        Debug.Log(value.Get<float>());
+        if(value.Get() != null)
+            upDown = value.Get<float>();
+    }
 }

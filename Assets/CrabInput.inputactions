@@ -15,6 +15,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "UpDown",
+                    "type": "Value",
+                    "id": "dbeb0f7f-1265-4454-b345-9aecd7f62ecc",
+                    "expectedControlType": "Axis",
+                    "processors": "Normalize(max=1)",
+                    "interactions": "Press",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Look",
                     "type": "Value",
                     "id": "1755d1d8-949a-4bfb-ac71-b017a8748c67",
@@ -188,6 +197,28 @@
                     "processors": "",
                     "groups": ";KeyboardMouse",
                     "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d26a4bfb-3d45-470c-b6ff-be147ad016b7",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "Normalize(max=1)",
+                    "groups": ";KeyboardMouse",
+                    "action": "UpDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7f89a291-183b-489b-bbda-b9e828998f82",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "Invert,Normalize(max=1)",
+                    "groups": ";KeyboardMouse",
+                    "action": "UpDown",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
