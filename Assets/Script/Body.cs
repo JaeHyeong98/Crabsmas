@@ -20,6 +20,7 @@ public class Body : MonoBehaviour
     public Rigidbody crabBody;  // 몸체 Rigidbody
     public LegState state;
     public float force = 100f;
+    public float upDownSpeed = 0.1f;
     private int legCount = 4;
     private float standardDist = 4.5f;
 
@@ -29,6 +30,7 @@ public class Body : MonoBehaviour
     public Transform[] legs;
     
     Coroutine coroutine;
+    Coroutine upDownCoroutine;
 
     private bool checkOrgPos;
     private int lastMoveLeg;
@@ -62,6 +64,61 @@ public class Body : MonoBehaviour
     private void FixedUpdate()
     {
         GravityLegForce();
+    }
+
+    public void BodyUpDown(float n)
+    {
+        float dist = 0;
+        dist = RayCastCheck();
+
+        if (n == 0 && upDownCoroutine != null)
+        {
+            StopCoroutine(upDownCoroutine);
+            upDownCoroutine = null;
+        }
+        else if (n != 0 && (state == LegState.Normal || state == LegState.Leg3))
+        {
+            upDownCoroutine = StartCoroutine(BodyUpDow_Fn(n));
+        }
+
+    }
+
+    public float RayCastCheck()
+    {
+        RaycastHit hit;
+        float dist = 0;
+        if (Physics.Raycast(transform.position, transform.up * -1, out hit))
+        {
+            // 닿은 물체의 이름을 출력
+            dist = hit.distance;
+        }
+
+        return dist;
+    }
+
+    IEnumerator BodyUpDow_Fn(float n)
+    {
+        while (true)
+        {
+            yield return new WaitForFixedUpdate();
+            Debug.Log("press");
+            if (n > 0) // 몸 상승
+            {
+                transform.position += (Vector3.up * upDownSpeed * Time.deltaTime);
+            }
+            else if (n < 0) // 몸 하강
+            {
+                transform.position += (Vector3.up * upDownSpeed * -1 * Time.deltaTime);
+            }
+            else if (n == 0)
+            {
+                break;
+            }
+
+            if (RayCastCheck() < 0.8f || RayCastCheck() > 6.5f)
+                break;
+        }
+            
     }
 
     private void MoveLeg() // 플레이어 스테이트에 따라 다리 들리는 기능
@@ -113,22 +170,17 @@ public class Body : MonoBehaviour
         switch (state)
         {
             case LegState.Normal:
-                upForce = Physics.gravity / 4 * -1 * crabBody.mass;
-                for (int i = 0; i < 4; i++)
-                {
-                    if (legs[i] != null)
-                        crabBody.AddForceAtPosition(upForce, legs[i].position);
-                }
-                transform.localEulerAngles = Vector3.zero;
                 break;
 
             case LegState.Leg2_parallel:
+                crabBody.useGravity = true;
                 break;
 
-            case LegState.Leg2_diagonal:
+            case LegState.Leg2_diagonal: // safe
                 break;
 
             case LegState.No:
+                crabBody.useGravity = true;
                 break;
         }
 

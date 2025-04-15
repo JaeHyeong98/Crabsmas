@@ -84,6 +84,7 @@ public class InputController : MonoBehaviour
         set
         {
             upDown_ = value;
+            GSC.playerController.player.BodyUpDown(upDown_);
         }
     }
     private float upDown_;
@@ -130,8 +131,6 @@ public class InputController : MonoBehaviour
 
     public void OnUpDown(InputValue value)
     {
-        Debug.Log(value.Get<float>());
-        if(value.Get() != null)
-            upDown = value.Get<float>();
+        upDown = value.Get<float>();
     }
 }
