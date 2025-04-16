@@ -20,7 +20,7 @@ public class Body : MonoBehaviour
     public Rigidbody crabBody;  // 몸체 Rigidbody
     public LegState state;
     public float force = 100f;
-    public float upDownSpeed = 0.1f;
+    public float upDownSpeed = 1f;
     private int legCount = 4;
     private float standardDist = 4.5f;
 
@@ -114,8 +114,8 @@ public class Body : MonoBehaviour
             {
                 break;
             }
-
-            if (RayCastCheck() < 0.8f || RayCastCheck() > 6.5f)
+            LegEscapeCheck();
+            if (RayCastCheck() < 0.8f || RayCastCheck() > 7f)
                 break;
         }
             
@@ -209,22 +209,7 @@ public class Body : MonoBehaviour
                 break;
             }
 
-            for (int i = 0; i < 4; i++)
-            {
-                if (!legsEnd[i].isDeath)
-                {
-                    float dist = DistanceCheck(legsEnd[i].transform);
-                    if (legsEnd[i] != lt && (dist > 7.5f || dist < 3f))
-                    {
-                        legsEnd[i].EscapeLeg();
-                        LegStateChage(i);
-
-                        Vector3 downForce = Vector3.down * 40f;
-                        Vector3 upForce = Vector3.up * 4 * 10f;
-                        crabBody.AddForce(downForce + upForce);
-                    }
-                }
-            }
+            LegEscapeCheck();
 
             yield return null;
         }
@@ -243,10 +228,24 @@ public class Body : MonoBehaviour
 
     public float DistanceCheck(Transform t) // 몸과 한 지점 간의 거리
     {
-        Vector3 ltPos = new Vector3(t.position.x, 0, t.position.z);
-        Vector3 pos = new Vector3(transform.position.x, 0, transform.position.z);
-        float dist = Vector3.Distance(ltPos, pos);
+        float dist = Vector3.Distance(t.position, transform.position);
         return dist;
+    }
+
+    private void LegEscapeCheck()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (!legsEnd[i].isDeath)
+            {
+                float dist = DistanceCheck(legsEnd[i].transform);
+                if (dist > 7.5f || dist < 3f)
+                {
+                    legsEnd[i].EscapeLeg();
+                    LegStateChage(i);
+                }
+            }
+        }
     }
 
     public void LegStateChage(int num) // 다리 갯수 상태 변화
