@@ -18,6 +18,7 @@ public class LegTarget : MonoBehaviour
     private Vector3 curPos;
     private Vector3 preMove;
     private Rigidbody rb;
+    private bool isAdd;
 
     private void OnEnable()
     {
@@ -73,8 +74,6 @@ public class LegTarget : MonoBehaviour
             curState = PointState.Land; // 타겟이 땅에 내린 상태
             LandAction();
         }
-
-        
     }
 
     private void OnTriggerStay(Collider other)
@@ -100,6 +99,7 @@ public class LegTarget : MonoBehaviour
     {
         //GSC.audioController.PlaySound2D("Click");
         GSC.audioController.PlaySound3D("Walk",transform,0,false,SoundType.Eff,true,8,80);
+        body.BodyRotation();
         body.RigidStopControl(false);
         curPos = transform.position;
         curState = PointState.Idle;
@@ -114,12 +114,22 @@ public class LegTarget : MonoBehaviour
         }
 
         prePos = curPos;
+        isAdd = false;
     }
 
     public void OnTakeOff()
     {
         rb.isKinematic = true;
-        transform.position = new Vector3(transform.position.x, 2f, transform.position.z);
+
+        transform.rotation = body.transform.rotation;
+        //body.poles.transform.rotation = body.transform.rotation;
+        Vector3 v = transform.up.normalized * 2;
+        Debug.Log(v);
+        if(!isAdd)
+        {
+            transform.localPosition = transform.localPosition + v;
+            isAdd = true;
+        }
     }
 
     public void OnLand()

@@ -163,7 +163,60 @@ public class Body : MonoBehaviour
         }
     } 
 
-    private void GravityLegForce()
+    public void BodyRotation() // 다리 4개로 몸 기울기 설정
+    {
+        if (legCount < 3) return;
+        int cnt = 0;
+        Vector3[] legs = new Vector3[4];
+        Vector3 normalVector = Vector3.zero;
+        Vector3 forwardVector = Vector3.zero;
+
+        for (int i=0; i<legCount; i++)
+        {
+            if (!legsEnd[i].isDeath)
+            {
+                legs[cnt] = legTargets[i].transform.position;
+                cnt++;
+            }
+        }
+        
+        switch(legCount)
+        {
+            case 4:
+                // 첫 번째 쌍의 벡터와 법선 벡터
+                Vector3 v1_1 = legs[1] - legs[0];
+                Vector3 v1_2 = legs[2] - legs[0];
+                Vector3 normal1 = Vector3.Cross(v1_1, v1_2).normalized;
+
+                // 두 번째 쌍의 벡터와 법선 벡터
+                Vector3 v2_1 = legs[3] - legs[0];
+                Vector3 v2_2 = legs[2] - legs[1];
+                Vector3 normal2 = Vector3.Cross(v2_1, v2_2).normalized;
+
+                // 두 법선 벡터의 평균을 계산하고 정규화
+                normalVector = (normal1 + normal2).normalized;
+
+                forwardVector = (v1_1 - Vector3.Project(v1_1, normalVector)).normalized;
+                break;
+        
+            case 3:
+                Vector3 v1 = legs[1] - legs[0];
+                Vector3 v2 = legs[2] - legs[0];
+                normalVector = Vector3.Cross(v1, v2).normalized;
+
+                // 평면의 forward 벡터를 계산 (v1을 normalVector에 수직인 방향으로 투영)
+                forwardVector = (v1 - Vector3.Project(v1, normalVector)).normalized;
+                break;
+        }
+        
+        // Quaternion.LookRotation을 사용하여 rotation 생성
+        Quaternion targetRotation = Quaternion.LookRotation(forwardVector, normalVector);
+
+        Debug.Log(targetRotation.eulerAngles);
+        //transform.rotation = targetRotation;
+    }
+
+    private void GravityLegForce() // 몸 중력 적용 시점 변경
     {
         Vector3 upForce = Vector3.zero;
         //01 23 02 13
@@ -184,20 +237,18 @@ public class Body : MonoBehaviour
                 break;
         }
 
-        poles.position = new Vector3(transform.position.x, 0f, transform.position.z);
+        //poles.position = new Vector3(transform.position.x, 0f, transform.position.z);
     }
     
     public void MoveBody(Vector3 vec,LegTarget lt) // 몸 이동
     {
         Debug.Log("[Body] MoveBody");
         coroutine = StartCoroutine(Move(vec, lt));
-        Vector3 upForce = Physics.gravity / legCount * -1;
     }
 
     IEnumerator Move(Vector3 vec, LegTarget lt) // 몸 이동 기능
     {
         Vector3 moveDir = vec.normalized;
-        moveDir = new Vector3(moveDir.x, 0, moveDir.z);
 
         crabBody.AddForce(moveDir * force);
 
@@ -232,7 +283,7 @@ public class Body : MonoBehaviour
         return dist;
     }
 
-    private void LegEscapeCheck()
+    private void LegEscapeCheck() // 다리 떨어져 나가는 시점 계산
     {
         for (int i = 0; i < 4; i++)
         {
