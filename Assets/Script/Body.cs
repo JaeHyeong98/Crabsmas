@@ -242,7 +242,7 @@ public class Body : MonoBehaviour
     
     public void MoveBody(Vector3 vec,LegTarget lt) // ¸ö ÀÌµ¿
     {
-        Debug.Log("[Body] MoveBody");
+        //Debug.Log("[Body] MoveBody");
         coroutine = StartCoroutine(Move(vec, lt));
     }
 
@@ -293,6 +293,7 @@ public class Body : MonoBehaviour
                 if (dist > 7.5f || dist < 3f)
                 {
                     legsEnd[i].EscapeLeg();
+                    legTargets[i].gameObject.SetActive(false);
                     LegStateChage(i);
                 }
             }
@@ -380,10 +381,10 @@ public class Body : MonoBehaviour
 
             Vector3 val = new Vector3(GSC.inputController.look.y, 0f, GSC.inputController.look.x).normalized * 0.05f;
             Vector3 nextPos = orgPos + val;
-
+            legTargets[lastMoveLeg].transform.localPosition += val;
             if (MathF.Abs(Vector3.Distance(nextPos, orgPos)) <= 1f)
             {
-                legTargets[lastMoveLeg].transform.localPosition += val;
+                
             }
         }
         else

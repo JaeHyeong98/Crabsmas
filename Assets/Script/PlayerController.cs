@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
                 GSC.cameraController.camState = CamState.Lock;
             }
         }
-        Debug.Log(state);
+        //Debug.Log(state);
     }
 
     public void OnStop(InputValue val)

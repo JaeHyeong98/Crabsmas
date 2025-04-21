@@ -19,6 +19,8 @@ public class LegTarget : MonoBehaviour
     private Vector3 preMove;
     private Rigidbody rb;
     private bool isAdd;
+    private bool isLand;
+    private bool isTakeOff;
 
     private void OnEnable()
     {
@@ -97,8 +99,10 @@ public class LegTarget : MonoBehaviour
 
     private void LandAction()
     {
+        isLand = true;
         //GSC.audioController.PlaySound2D("Click");
         GSC.audioController.PlaySound3D("Walk",transform,0,false,SoundType.Eff,true,8,80);
+        rb.linearVelocity = Vector3.zero;
         body.BodyRotation();
         body.RigidStopControl(false);
         curPos = transform.position;
@@ -119,12 +123,12 @@ public class LegTarget : MonoBehaviour
 
     public void OnTakeOff()
     {
-        rb.isKinematic = true;
+        isTakeOff = true;
+        isLand = false;
 
         transform.rotation = body.transform.rotation;
         //body.poles.transform.rotation = body.transform.rotation;
         Vector3 v = transform.up.normalized * 2;
-        Debug.Log(v);
         if(!isAdd)
         {
             transform.localPosition = transform.localPosition + v;
@@ -134,8 +138,14 @@ public class LegTarget : MonoBehaviour
 
     public void OnLand()
     {
-        rb.isKinematic = false;
+        if(!isLand && isTakeOff)
+        {
+            isTakeOff = false;
+            rb.AddRelativeForce(Vector3.down * 250);
+            Debug.Log("Release btn");
+        }
     }
+
 
     public void KinematicOnOff(bool val)
     {

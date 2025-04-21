@@ -66,5 +66,8 @@ public class LegEndPoint : MonoBehaviour
         }
         
         legStart.GetComponent<Collider>().enabled = false;
+
+        yield return new WaitForSecondsRealtime(8f);
+        legStart.gameObject.SetActive(false);
     }
 }
