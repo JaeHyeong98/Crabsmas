@@ -22,7 +22,7 @@ public class LegEndPoint : MonoBehaviour
         if (!legStart.name.Contains("Leg"))
             legStart = legStart.transform.parent;
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 8; i++)
         {
             if (legStart.name.Contains(i.ToString()))
             {
@@ -45,7 +45,6 @@ public class LegEndPoint : MonoBehaviour
         body.RigidStopControl(true);
         body.RigidStopControl(false);
         legStart.parent = GSC.main.deathLegs;
-        Destroy(legStart.GetComponent<FixedJoint>());
 
         Rigidbody rb = legStart.GetComponent<Rigidbody>();
         legStart.GetComponent<Collider>().isTrigger = false;

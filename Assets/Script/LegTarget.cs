@@ -39,8 +39,9 @@ public class LegTarget : MonoBehaviour
         curPos = transform.position;
 
         rb = GetComponent<Rigidbody>();
-
-        for (int i = 0; i < 4; i++)
+        body.legCount++;
+        Debug.Log(transform.name+", "+body.legCount);
+        for (int i = 0; i < 8; i++)
         {
             if (transform.name.Contains(i.ToString()))
             {

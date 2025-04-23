@@ -21,7 +21,7 @@ public class Body : MonoBehaviour
     public LegState state;
     public float force = 100f;
     public float upDownSpeed = 1f;
-    private int legCount = 4;
+    public int legCount = 0;
     private float standardDist = 4.5f;
 
     public Transform poles;
@@ -43,9 +43,10 @@ public class Body : MonoBehaviour
     public IEnumerator Init()
     {
         crabBody = GetComponent<Rigidbody>();
-        legTargets = new LegTarget[4];
-        legsEnd = new LegEndPoint[4];
-        legs = new Transform[4];
+        legCount = 0;
+        legTargets = new LegTarget[8];
+        legsEnd = new LegEndPoint[8];
+        legs = new Transform[8];
 
         yield return new WaitUntil(() => GSC.playerController != null);
         GSC.playerController.player = this;
@@ -115,7 +116,7 @@ public class Body : MonoBehaviour
                 break;
             }
             LegEscapeCheck();
-            if (RayCastCheck() < 0.8f || RayCastCheck() > 7f)
+            if (RayCastCheck() < 0.03f || RayCastCheck() > 7f)
                 break;
         }
             
@@ -167,9 +168,9 @@ public class Body : MonoBehaviour
     {
         Vector4 vec = Vector4.zero;
         int cnt = 0;
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < legCount; i++)
         {
-            if (!legsEnd[i].isDeath && legTargets[i].landGround != null)
+            if (legsEnd[i]!= null & !legsEnd[i].isDeath && legTargets[i].landGround != null)
             {
                 vec.x += legTargets[i].landGround.rotation.x;
                 vec.y += legTargets[i].landGround.rotation.y;
@@ -255,12 +256,14 @@ public class Body : MonoBehaviour
 
     private void LegEscapeCheck() // 다리 떨어져 나가는 시점 계산
     {
-        for (int i = 0; i < 4; i++)
+        Debug.Log(legCount);
+        for (int i = 0; i < legCount; i++)
         {
-            if (!legsEnd[i].isDeath)
+            if (legsEnd[i]!=null && !legsEnd[i].isDeath)
             {
                 float dist = DistanceCheck(legsEnd[i].transform);
-                if (dist > 7.5f || dist < 3f)
+                //Debug.Log(dist);
+                if (dist > 7.5f || dist < 2f)
                 {
                     legsEnd[i].EscapeLeg();
                     legTargets[i].gameObject.SetActive(false);
