@@ -14,11 +14,11 @@ public class LegTarget : MonoBehaviour
     }
 
     public PointState curState;
+    public Transform landGround;
     private Vector3 prePos;
     private Vector3 curPos;
     private Vector3 preMove;
     private Rigidbody rb;
-    private bool isAdd;
     private bool isLand;
     private bool isTakeOff;
 
@@ -39,8 +39,9 @@ public class LegTarget : MonoBehaviour
         curPos = transform.position;
 
         rb = GetComponent<Rigidbody>();
-
-        for (int i = 0; i < 4; i++)
+        body.legCount++;
+        Debug.Log(transform.name+", "+body.legCount);
+        for (int i = 0; i < 8; i++)
         {
             if (transform.name.Contains(i.ToString()))
             {
@@ -55,7 +56,7 @@ public class LegTarget : MonoBehaviour
         if (collision.collider.CompareTag("Ground") && curState == PointState.TakeOff) // 공중에 떠있는 상태에서 타겟이 땅에 다인 경우
         {
             curState = PointState.Land; // 타겟이 땅에 내린 상태
-            LandAction();
+            LandAction(collision.collider);
         }
     }
 
@@ -74,7 +75,7 @@ public class LegTarget : MonoBehaviour
         if (other.CompareTag("Ground") && curState == PointState.TakeOff) // 공중에 떠있는 상태에서 타겟이 땅에 다인 경우
         {
             curState = PointState.Land; // 타겟이 땅에 내린 상태
-            LandAction();
+            LandAction(other);
         }
     }
 
@@ -97,13 +98,16 @@ public class LegTarget : MonoBehaviour
         }
     }
 
-    private void LandAction()
+    private void LandAction(Collider other)
     {
         isLand = true;
+        landGround = other.transform;
         //GSC.audioController.PlaySound2D("Click");
         GSC.audioController.PlaySound3D("Walk",transform,0,false,SoundType.Eff,true,8,80);
         rb.linearVelocity = Vector3.zero;
-        body.BodyRotation();
+
+        body.BodyRotation(); // 수정 중
+
         body.RigidStopControl(false);
         curPos = transform.position;
         curState = PointState.Idle;
@@ -118,22 +122,15 @@ public class LegTarget : MonoBehaviour
         }
 
         prePos = curPos;
-        isAdd = false;
     }
 
     public void OnTakeOff()
     {
         isTakeOff = true;
         isLand = false;
+        landGround = null;
 
         transform.rotation = body.transform.rotation;
-        //body.poles.transform.rotation = body.transform.rotation;
-        Vector3 v = transform.up.normalized * 2;
-        if(!isAdd)
-        {
-            transform.localPosition = transform.localPosition + v;
-            isAdd = true;
-        }
     }
 
     public void OnLand()

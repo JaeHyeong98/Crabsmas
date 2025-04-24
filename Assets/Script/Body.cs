@@ -21,7 +21,7 @@ public class Body : MonoBehaviour
     public LegState state;
     public float force = 100f;
     public float upDownSpeed = 1f;
-    private int legCount = 4;
+    public int legCount = 0;
     private float standardDist = 4.5f;
 
     public Transform poles;
@@ -43,9 +43,10 @@ public class Body : MonoBehaviour
     public IEnumerator Init()
     {
         crabBody = GetComponent<Rigidbody>();
-        legTargets = new LegTarget[4];
-        legsEnd = new LegEndPoint[4];
-        legs = new Transform[4];
+        legCount = 0;
+        legTargets = new LegTarget[8];
+        legsEnd = new LegEndPoint[8];
+        legs = new Transform[8];
 
         yield return new WaitUntil(() => GSC.playerController != null);
         GSC.playerController.player = this;
@@ -115,7 +116,7 @@ public class Body : MonoBehaviour
                 break;
             }
             LegEscapeCheck();
-            if (RayCastCheck() < 0.8f || RayCastCheck() > 7f)
+            if (RayCastCheck() < 0.03f || RayCastCheck() > 7f)
                 break;
         }
             
@@ -165,55 +166,25 @@ public class Body : MonoBehaviour
 
     public void BodyRotation() // 다리 4개로 몸 기울기 설정
     {
-        if (legCount < 3) return;
+        Vector4 vec = Vector4.zero;
         int cnt = 0;
-        Vector3[] legs = new Vector3[4];
-        Vector3 normalVector = Vector3.zero;
-        Vector3 forwardVector = Vector3.zero;
-
-        for (int i=0; i<legCount; i++)
+        for(int i = 0; i < legCount; i++)
         {
-            if (!legsEnd[i].isDeath)
+            if (legsEnd[i]!= null & !legsEnd[i].isDeath && legTargets[i].landGround != null)
             {
-                legs[cnt] = legTargets[i].transform.position;
+                vec.x += legTargets[i].landGround.rotation.x;
+                vec.y += legTargets[i].landGround.rotation.y;
+                vec.z += legTargets[i].landGround.rotation.z;
+                vec.w += legTargets[i].landGround.rotation.w;
                 cnt++;
             }
         }
-        
-        switch(legCount)
-        {
-            case 4:
-                // 첫 번째 쌍의 벡터와 법선 벡터
-                Vector3 v1_1 = legs[1] - legs[0];
-                Vector3 v1_2 = legs[2] - legs[0];
-                Vector3 normal1 = Vector3.Cross(v1_1, v1_2).normalized;
 
-                // 두 번째 쌍의 벡터와 법선 벡터
-                Vector3 v2_1 = legs[3] - legs[0];
-                Vector3 v2_2 = legs[2] - legs[1];
-                Vector3 normal2 = Vector3.Cross(v2_1, v2_2).normalized;
+        vec = vec / cnt;
+        Quaternion quat = new Quaternion(vec.x, vec.y, vec.z, vec.w).normalized;
 
-                // 두 법선 벡터의 평균을 계산하고 정규화
-                normalVector = (normal1 + normal2).normalized;
-
-                forwardVector = (v1_1 - Vector3.Project(v1_1, normalVector)).normalized;
-                break;
-        
-            case 3:
-                Vector3 v1 = legs[1] - legs[0];
-                Vector3 v2 = legs[2] - legs[0];
-                normalVector = Vector3.Cross(v1, v2).normalized;
-
-                // 평면의 forward 벡터를 계산 (v1을 normalVector에 수직인 방향으로 투영)
-                forwardVector = (v1 - Vector3.Project(v1, normalVector)).normalized;
-                break;
-        }
-        
-        // Quaternion.LookRotation을 사용하여 rotation 생성
-        Quaternion targetRotation = Quaternion.LookRotation(forwardVector, normalVector);
-
-        Debug.Log(targetRotation.eulerAngles);
-        //transform.rotation = targetRotation;
+        transform.rotation = Quaternion.Slerp(transform.rotation, quat, Time.deltaTime);
+        Debug.Log(quat);
     }
 
     private void GravityLegForce() // 몸 중력 적용 시점 변경
@@ -285,12 +256,14 @@ public class Body : MonoBehaviour
 
     private void LegEscapeCheck() // 다리 떨어져 나가는 시점 계산
     {
-        for (int i = 0; i < 4; i++)
+        Debug.Log(legCount);
+        for (int i = 0; i < legCount; i++)
         {
-            if (!legsEnd[i].isDeath)
+            if (legsEnd[i]!=null && !legsEnd[i].isDeath)
             {
                 float dist = DistanceCheck(legsEnd[i].transform);
-                if (dist > 7.5f || dist < 3f)
+                //Debug.Log(dist);
+                if (dist > 7.5f || dist < 2f)
                 {
                     legsEnd[i].EscapeLeg();
                     legTargets[i].gameObject.SetActive(false);
@@ -379,13 +352,11 @@ public class Body : MonoBehaviour
                 checkOrgPos = true;
             }
 
-            Vector3 val = new Vector3(GSC.inputController.look.y, 0f, GSC.inputController.look.x).normalized * 0.05f;
-            Vector3 nextPos = orgPos + val;
-            legTargets[lastMoveLeg].transform.localPosition += val;
-            if (MathF.Abs(Vector3.Distance(nextPos, orgPos)) <= 1f)
-            {
-                
-            }
+            Vector3 val = new Vector3(GSC.inputController.look.y, 1.5f, GSC.inputController.look.x).normalized;
+            Vector3 localMovement = Quaternion.Inverse(transform.rotation) * val;
+            //Vector3 nextPos = orgPos + val;
+            legTargets[lastMoveLeg].transform.Translate(localMovement * 5f * Time.deltaTime, Space.Self);
+            //legTargets[lastMoveLeg].transform.localPosition += val;
         }
         else
         {
