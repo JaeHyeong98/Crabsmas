@@ -40,7 +40,6 @@ public class LegTarget : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         body.legCount++;
-        Debug.Log(transform.name+", "+body.legCount);
         for (int i = 0; i < 8; i++)
         {
             if (transform.name.Contains(i.ToString()))

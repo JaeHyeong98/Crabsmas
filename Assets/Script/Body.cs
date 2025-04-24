@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Main;
 using UnityEngine;
@@ -183,7 +182,7 @@ public class Body : MonoBehaviour
         vec = vec / cnt;
         Quaternion quat = new Quaternion(vec.x, vec.y, vec.z, vec.w).normalized;
 
-        transform.rotation = Quaternion.Slerp(transform.rotation, quat, Time.deltaTime);
+        //transform.rotation = Quaternion.Slerp(transform.rotation, quat, Time.deltaTime);
         Debug.Log(quat);
     }
 

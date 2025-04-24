@@ -38,6 +38,7 @@ public class CameraController : MonoBehaviour
 
     void Start()
     {
+        //Target.transform.eulerAngles = new Vector3(40, 0, 0);
         _cinemachineTargetYaw = Target.transform.rotation.eulerAngles.y;
 
         Vector3 angles = transform.eulerAngles;
