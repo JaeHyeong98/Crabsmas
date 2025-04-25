@@ -18,7 +18,7 @@ public class LegEndPoint : MonoBehaviour
     {
         yield return new WaitUntil(() => GSC.playerController != null && GSC.playerController.player != null);
         isDeath = false;
-        legStart = transform.parent.parent.parent.parent.parent;
+        legStart = transform.parent.parent.parent.parent;
         if (!legStart.name.Contains("Leg"))
             legStart = legStart.transform.parent;
 

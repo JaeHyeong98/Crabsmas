@@ -40,6 +40,7 @@ public class LegTarget : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         body.legCount++;
+        body.maxLegCount++;
         for (int i = 0; i < 8; i++)
         {
             if (transform.name.Contains(i.ToString()))
@@ -102,7 +103,11 @@ public class LegTarget : MonoBehaviour
         isLand = true;
         landGround = other.transform;
         //GSC.audioController.PlaySound2D("Click");
-        GSC.audioController.PlaySound3D("Walk",transform,0,false,SoundType.Eff,true,8,80);
+        int num = int.Parse(transform.name.Split("_")[1]);
+        if(body.maxLegCount == 8 && num%4 <2)
+            GSC.audioController.PlaySound3D("Walk",transform,0,false,SoundType.Eff,true,8,80);
+        else if(body.maxLegCount == 4)
+            GSC.audioController.PlaySound3D("Walk", transform, 0, false, SoundType.Eff, true, 8, 80);
         rb.linearVelocity = Vector3.zero;
 
         body.BodyRotation(); // 수정 중

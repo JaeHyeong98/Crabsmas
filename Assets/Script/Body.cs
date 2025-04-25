@@ -21,7 +21,8 @@ public class Body : MonoBehaviour
     public float force = 100f;
     public float upDownSpeed = 1f;
     public int legCount = 0;
-    private float standardDist = 4.5f;
+    public int maxLegCount = 0;
+    public float standardDist = 4.5f;
 
     public Transform poles;
     public LegTarget[] legTargets;
@@ -124,43 +125,104 @@ public class Body : MonoBehaviour
     private void MoveLeg() // 플레이어 스테이트에 따라 다리 들리는 기능
     {
         if (!isInit) return;
-        switch (GSC.playerController.state)
+        if(maxLegCount == 8)
         {
-            case PlayerState.Idle:
-                RigidStopControl(false);
-                break;
+            switch (GSC.playerController.state)
+            {
+                case PlayerState.Idle:
+                    RigidStopControl(false);
+                    break;
 
-            case PlayerState.Stop:
-                RigidStopControl(true);
-                break;
+                case PlayerState.Stop:
+                    RigidStopControl(true);
+                    break;
 
-            case PlayerState.Leg0Up:
-                lastMoveLeg = 0;
-                if (!legsEnd[0].isDeath)
-                    legTargets[0].OnTakeOff();
-                break;
+                case PlayerState.Leg0Up:
+                    {
+                        lastMoveLeg = 0;
+                        if (!legsEnd[0].isDeath)
+                            legTargets[0].OnTakeOff();
+                        if (!legsEnd[2].isDeath)
+                            legTargets[2].OnTakeOff();
+                    }
+                    break;
 
-            case PlayerState.Leg1Up:
-                lastMoveLeg = 1;
-                if (!legsEnd[1].isDeath)
-                    legTargets[1].OnTakeOff();
-                break;
-            case PlayerState.Leg2Up:
-                lastMoveLeg = 2;
-                if (!legsEnd[2].isDeath)
-                    legTargets[2].OnTakeOff();
-                break;
-            case PlayerState.Leg3Up:
-                lastMoveLeg = 3;
-                if (!legsEnd[3].isDeath)
-                    legTargets[3].OnTakeOff();
-                break;
+                case PlayerState.Leg1Up:
+                    {
+                        lastMoveLeg = 1;
+                        if (!legsEnd[1].isDeath)
+                            legTargets[1].OnTakeOff();
+                        if (!legsEnd[3].isDeath)
+                            legTargets[3].OnTakeOff();
+                    }
+                    break;
+                case PlayerState.Leg2Up:
+                    {
+                        lastMoveLeg = 4;
+                        if (!legsEnd[4].isDeath)
+                            legTargets[4].OnTakeOff();
+                        if (!legsEnd[6].isDeath)
+                            legTargets[6].OnTakeOff();
+                    }
+                    break;
+                case PlayerState.Leg3Up:
+                    {
+                        lastMoveLeg = 5;
+                        if (!legsEnd[5].isDeath)
+                            legTargets[5].OnTakeOff();
+                        if (!legsEnd[7].isDeath)
+                            legTargets[7].OnTakeOff();
+                    }
+                    break;
 
-            case PlayerState.LegDown:
-                legTargets[lastMoveLeg].OnLand();
-                break;
+                case PlayerState.LegDown:
+                    legTargets[lastMoveLeg].OnLand();
+                    legTargets[lastMoveLeg+2].OnLand();
+                    break;
 
+            }
         }
+        else if(maxLegCount == 4)
+        {
+            switch (GSC.playerController.state)
+            {
+                case PlayerState.Idle:
+                    RigidStopControl(false);
+                    break;
+
+                case PlayerState.Stop:
+                    RigidStopControl(true);
+                    break;
+
+                case PlayerState.Leg0Up:
+                    lastMoveLeg = 0;
+                    if (!legsEnd[0].isDeath)
+                        legTargets[0].OnTakeOff();
+                    break;
+
+                case PlayerState.Leg1Up:
+                    lastMoveLeg = 1;
+                    if (!legsEnd[1].isDeath)
+                        legTargets[1].OnTakeOff();
+                    break;
+                case PlayerState.Leg2Up:
+                    lastMoveLeg = 2;
+                    if (!legsEnd[2].isDeath)
+                        legTargets[2].OnTakeOff();
+                    break;
+                case PlayerState.Leg3Up:
+                    lastMoveLeg = 3;
+                    if (!legsEnd[3].isDeath)
+                        legTargets[3].OnTakeOff();
+                    break;
+
+                case PlayerState.LegDown:
+                    legTargets[lastMoveLeg].OnLand();
+                    break;
+
+            }
+        }
+        
     } 
 
     public void BodyRotation() // 다리 4개로 몸 기울기 설정
@@ -212,21 +274,21 @@ public class Body : MonoBehaviour
     
     public void MoveBody(Vector3 vec,LegTarget lt) // 몸 이동
     {
-        //Debug.Log("[Body] MoveBody");
-        coroutine = StartCoroutine(Move(vec, lt));
+        Debug.Log("[Body] MoveBody");
+        if(coroutine == null)
+            coroutine = StartCoroutine(Move(vec, lt));
     }
 
     IEnumerator Move(Vector3 vec, LegTarget lt) // 몸 이동 기능
     {
-        Vector3 moveDir = vec.normalized;
-
-        crabBody.AddForce(moveDir * force);
-
+        crabBody.AddForce(vec * force);
         while (true)
         {
-            if (DistanceCheck(lt.transform) < standardDist)
+            if (DistanceCheck(lt.transform) <= standardDist)
             {
-                crabBody.AddForce(moveDir * force * -1);
+                crabBody.linearVelocity = Vector3.zero;
+                crabBody.angularVelocity = Vector3.zero;
+                crabBody.isKinematic = true;
                 break;
             }
 
@@ -255,7 +317,6 @@ public class Body : MonoBehaviour
 
     private void LegEscapeCheck() // 다리 떨어져 나가는 시점 계산
     {
-        Debug.Log(legCount);
         for (int i = 0; i < legCount; i++)
         {
             if (legsEnd[i]!=null && !legsEnd[i].isDeath)
@@ -354,7 +415,14 @@ public class Body : MonoBehaviour
             Vector3 val = new Vector3(GSC.inputController.look.y, 1.5f, GSC.inputController.look.x).normalized;
             Vector3 localMovement = Quaternion.Inverse(transform.rotation) * val;
             //Vector3 nextPos = orgPos + val;
-            legTargets[lastMoveLeg].transform.Translate(localMovement * 5f * Time.deltaTime, Space.Self);
+            if(maxLegCount == 4)
+                legTargets[lastMoveLeg].transform.Translate(localMovement * 5f * Time.deltaTime, Space.Self);
+
+            else if (maxLegCount == 8)
+            {
+                legTargets[lastMoveLeg].transform.Translate(localMovement * 5f * Time.deltaTime, Space.Self);
+                legTargets[lastMoveLeg+2].transform.Translate(localMovement * 5f * Time.deltaTime, Space.Self);
+            }
             //legTargets[lastMoveLeg].transform.localPosition += val;
         }
         else
