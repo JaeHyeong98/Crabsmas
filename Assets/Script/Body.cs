@@ -284,7 +284,7 @@ public class Body : MonoBehaviour
         crabBody.AddForce(vec * force);
         while (true)
         {
-            if (DistanceCheck(lt.transform) <= standardDist)
+            if (Mathf.Abs(DistanceCheck(lt.transform)) <= standardDist)
             {
                 crabBody.linearVelocity = Vector3.zero;
                 crabBody.angularVelocity = Vector3.zero;
@@ -322,8 +322,14 @@ public class Body : MonoBehaviour
             if (legsEnd[i]!=null && !legsEnd[i].isDeath)
             {
                 float dist = DistanceCheck(legsEnd[i].transform);
-                //Debug.Log(dist);
-                if (dist > 7.5f || dist < 2f)
+                Debug.Log(i+", "+dist);
+                if((i== 3 || i == 7) && (dist > 3.5f || dist < 1.8f))
+                {
+                    legsEnd[i].EscapeLeg();
+                    legTargets[i].gameObject.SetActive(false);
+                    LegStateChage(i);
+                }
+                else if (dist > 4.8f || dist < 1.8f)
                 {
                     legsEnd[i].EscapeLeg();
                     legTargets[i].gameObject.SetActive(false);

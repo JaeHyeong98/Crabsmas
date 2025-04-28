@@ -48,6 +48,7 @@ public class LegEndPoint : MonoBehaviour
 
         Rigidbody rb = legStart.GetComponent<Rigidbody>();
         legStart.GetComponent<Collider>().isTrigger = false;
+        Destroy(legStart.GetComponent<FixedJoint>());
         rb.mass = 5;
         rb.useGravity = true;
 
