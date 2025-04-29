@@ -22,7 +22,7 @@ public class Body : MonoBehaviour
     public float upDownSpeed = 1f;
     public int legCount = 0;
     public int maxLegCount = 0;
-    public float standardDist = 4.5f;
+    public float standardDist = 2.5f;
 
     public Transform poles;
     public LegTarget[] legTargets;
@@ -277,6 +277,14 @@ public class Body : MonoBehaviour
         Debug.Log("[Body] MoveBody");
         if(coroutine == null)
             coroutine = StartCoroutine(Move(vec, lt));
+        else
+        {
+            StopCoroutine(coroutine);
+            crabBody.linearVelocity = Vector3.zero;
+            crabBody.angularVelocity = Vector3.zero;
+            crabBody.isKinematic = true;
+            coroutine = StartCoroutine(Move(vec, lt));
+        }
     }
 
     IEnumerator Move(Vector3 vec, LegTarget lt) // 몸 이동 기능
@@ -284,6 +292,7 @@ public class Body : MonoBehaviour
         crabBody.AddForce(vec * force);
         while (true)
         {
+            Debug.Log(Mathf.Abs(DistanceCheck(lt.transform)));
             if (Mathf.Abs(DistanceCheck(lt.transform)) <= standardDist)
             {
                 crabBody.linearVelocity = Vector3.zero;
@@ -317,7 +326,7 @@ public class Body : MonoBehaviour
 
     private void LegEscapeCheck() // 다리 떨어져 나가는 시점 계산
     {
-        for (int i = 0; i < legCount; i++)
+        for (int i = 0; i < maxLegCount; i++)
         {
             if (legsEnd[i]!=null && !legsEnd[i].isDeath)
             {
@@ -329,7 +338,7 @@ public class Body : MonoBehaviour
                     legTargets[i].gameObject.SetActive(false);
                     LegStateChage(i);
                 }
-                else if (dist > 4.8f || dist < 1.8f)
+                else if (dist > 5f || dist < 1.8f)
                 {
                     legsEnd[i].EscapeLeg();
                     legTargets[i].gameObject.SetActive(false);
@@ -344,6 +353,7 @@ public class Body : MonoBehaviour
         legCount--;
         num = int.Parse(legs[num].name.Split('_')[1]);
         int preNum = 0;
+        Debug.Log(legCount);
         switch (legCount)
         {
             case 0:
