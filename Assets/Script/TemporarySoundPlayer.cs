@@ -57,7 +57,8 @@ public class TemporarySoundPlayer : MonoBehaviour
         if (!isLoop)
         {
             mTimer = mAudioSource.clip.length + delay;
-            StartCoroutine(DestroyAfterPlay());
+            if(transform != null)
+                StartCoroutine(DestroyAfterPlay());
         }
     }
 

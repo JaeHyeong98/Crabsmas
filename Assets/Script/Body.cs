@@ -274,12 +274,13 @@ public class Body : MonoBehaviour
     
     public void MoveBody(Vector3 vec,LegTarget lt) // 몸 이동
     {
-        Debug.Log("[Body] MoveBody");
+        //Debug.Log("[Body] MoveBody");
         if(coroutine == null)
             coroutine = StartCoroutine(Move(vec, lt));
         else
         {
             StopCoroutine(coroutine);
+            LegEscapeCheck();
             crabBody.linearVelocity = Vector3.zero;
             crabBody.angularVelocity = Vector3.zero;
             crabBody.isKinematic = true;
@@ -290,19 +291,19 @@ public class Body : MonoBehaviour
     IEnumerator Move(Vector3 vec, LegTarget lt) // 몸 이동 기능
     {
         crabBody.AddForce(vec * force);
+        float dist = Mathf.Abs(DistanceCheck(lt.transform));
         while (true)
         {
-            Debug.Log(Mathf.Abs(DistanceCheck(lt.transform)));
-            if (Mathf.Abs(DistanceCheck(lt.transform)) <= standardDist)
+            LegEscapeCheck();
+
+            //Debug.Log(Mathf.Abs(DistanceCheck(lt.transform)));
+            if (dist <= standardDist)
             {
                 crabBody.linearVelocity = Vector3.zero;
                 crabBody.angularVelocity = Vector3.zero;
                 crabBody.isKinematic = true;
                 break;
             }
-
-            LegEscapeCheck();
-
             yield return null;
         }
         coroutine = null;
@@ -320,7 +321,8 @@ public class Body : MonoBehaviour
 
     public float DistanceCheck(Transform t) // 몸과 한 지점 간의 거리
     {
-        float dist = Vector3.Distance(t.position, transform.position);
+        Vector3 vec = new Vector3(transform.position.x, transform.position.y + 0.05f, transform.position.z);
+        float dist = Vector3.Distance(t.position, vec);
         return dist;
     }
 
@@ -330,18 +332,25 @@ public class Body : MonoBehaviour
         {
             if (legsEnd[i]!=null && !legsEnd[i].isDeath)
             {
-                float dist = DistanceCheck(legsEnd[i].transform);
-                Debug.Log(i+", "+dist);
-                if((i== 3 || i == 7) && (dist > 3.5f || dist < 1.8f))
+                float dist = DistanceCheck(legTargets[i].transform);
+                Debug.Log(i + " dist = " + dist);
+                //Debug.Log(i+", "+dist);
+                if((i== 3 || i == 7) && (dist > 3.3f || dist < 1.2f)) // 짧은다리
                 {
                     legsEnd[i].EscapeLeg();
                     legTargets[i].gameObject.SetActive(false);
+                    crabBody.linearVelocity = Vector3.zero;
+                    crabBody.angularVelocity = Vector3.zero;
+                    crabBody.isKinematic = true;
                     LegStateChage(i);
                 }
-                else if (dist > 5f || dist < 1.8f)
+                else if (dist > 3.65f || dist < 1.3f) // 긴 다리
                 {
                     legsEnd[i].EscapeLeg();
                     legTargets[i].gameObject.SetActive(false);
+                    crabBody.linearVelocity = Vector3.zero;
+                    crabBody.angularVelocity = Vector3.zero;
+                    crabBody.isKinematic = true;
                     LegStateChage(i);
                 }
             }
@@ -353,7 +362,7 @@ public class Body : MonoBehaviour
         legCount--;
         num = int.Parse(legs[num].name.Split('_')[1]);
         int preNum = 0;
-        Debug.Log(legCount);
+        //Debug.Log(legCount);
         switch (legCount)
         {
             case 0:
@@ -367,7 +376,7 @@ public class Body : MonoBehaviour
 
             case 2:
                 {
-                    for (int i = 0; i < 4; i++)
+                    for (int i = 0; i < maxLegCount; i++)
                     {
                         if (i != num && legsEnd[i].isDeath)
                         {

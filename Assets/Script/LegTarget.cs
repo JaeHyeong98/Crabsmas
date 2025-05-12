@@ -143,7 +143,7 @@ public class LegTarget : MonoBehaviour
         {
             isTakeOff = false;
             rb.AddRelativeForce(Vector3.down * 250);
-            Debug.Log("Release btn");
+            //Debug.Log("Release btn");
         }
     }
 
