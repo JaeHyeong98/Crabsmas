@@ -30,10 +30,13 @@ public class Body : MonoBehaviour
     public Transform[] legs;
     
     Coroutine coroutine;
+    Coroutine rotateCoroutine;
     Coroutine upDownCoroutine;
 
     private bool checkOrgPos;
     private int lastMoveLeg;
+    private Vector3 targetVec; //몸체 기울기 목표 값
+    Vector3 rotationPerSecond = new Vector3(10f, 0, 10f);
 
     private void Awake()
     {
@@ -225,27 +228,40 @@ public class Body : MonoBehaviour
         
     } 
 
-    public void BodyRotation() // 다리 4개로 몸 기울기 설정
+    public void BodyRotation() // 다리로 몸 기울기 설정
     {
-        Vector4 vec = Vector4.zero;
+        Vector3 vec = Vector3.zero;
         int cnt = 0;
         for(int i = 0; i < legCount; i++)
         {
             if (legsEnd[i]!= null & !legsEnd[i].isDeath && legTargets[i].landGround != null)
             {
-                vec.x += legTargets[i].landGround.rotation.x;
-                vec.y += legTargets[i].landGround.rotation.y;
-                vec.z += legTargets[i].landGround.rotation.z;
-                vec.w += legTargets[i].landGround.rotation.w;
+                vec.x += legTargets[i].landGround.eulerAngles.x;
+                vec.y += 0;
+                vec.z += legTargets[i].landGround.eulerAngles.z;
                 cnt++;
             }
         }
 
         vec = vec / cnt;
-        Quaternion quat = new Quaternion(vec.x, vec.y, vec.z, vec.w).normalized;
+        Vector3 eul = new Vector3(vec.x, vec.y, vec.z).normalized;
+        targetVec = eul;
 
-        //transform.rotation = Quaternion.Slerp(transform.rotation, quat, Time.deltaTime);
-        Debug.Log(quat);
+        if(transform.eulerAngles != targetVec)
+        {
+            transform.Rotate(rotationPerSecond * Time.deltaTime);
+        }
+        Debug.Log(eul);
+
+        if(rotateCoroutine == null)
+            rotateCoroutine = StartCoroutine(BodyRotate());
+    }
+
+    IEnumerator BodyRotate()
+    {
+        yield return new WaitForFixedUpdate();
+
+        Debug.Log("dd");
     }
 
     private void GravityLegForce() // 몸 중력 적용 시점 변경
@@ -280,7 +296,6 @@ public class Body : MonoBehaviour
         else
         {
             StopCoroutine(coroutine);
-            LegEscapeCheck();
             crabBody.linearVelocity = Vector3.zero;
             crabBody.angularVelocity = Vector3.zero;
             crabBody.isKinematic = true;
@@ -333,7 +348,7 @@ public class Body : MonoBehaviour
             if (legsEnd[i]!=null && !legsEnd[i].isDeath)
             {
                 float dist = DistanceCheck(legTargets[i].transform);
-                Debug.Log(i + " dist = " + dist);
+                //Debug.Log(i + " dist = " + dist);
                 //Debug.Log(i+", "+dist);
                 if((i== 3 || i == 7) && (dist > 3.3f || dist < 1.2f)) // 짧은다리
                 {
