@@ -236,32 +236,36 @@ public class Body : MonoBehaviour
         {
             if (legsEnd[i]!= null & !legsEnd[i].isDeath && legTargets[i].landGround != null)
             {
-                vec.x += legTargets[i].landGround.eulerAngles.x;
+                vec.x -= legTargets[i].landGround.eulerAngles.x;
                 vec.y += 0;
-                vec.z += legTargets[i].landGround.eulerAngles.z;
+                vec.z -= legTargets[i].landGround.eulerAngles.z;
                 cnt++;
             }
         }
 
         vec = vec / cnt;
-        Vector3 eul = new Vector3(vec.x, vec.y, vec.z).normalized;
+        Vector3 eul = new Vector3(vec.z, vec.y, vec.x);
         targetVec = eul;
 
-        if(transform.eulerAngles != targetVec)
-        {
-            transform.Rotate(rotationPerSecond * Time.deltaTime);
-        }
         Debug.Log(eul);
 
-        if(rotateCoroutine == null)
+        if (rotateCoroutine == null)
             rotateCoroutine = StartCoroutine(BodyRotate());
+        else
+        {
+            StopCoroutine(rotateCoroutine);
+            rotateCoroutine = StartCoroutine(BodyRotate());
+        }
     }
 
     IEnumerator BodyRotate()
     {
-        yield return new WaitForFixedUpdate();
-
-        Debug.Log("dd");
+        while(Mathf.Abs(targetVec.x - transform.eulerAngles.x) < 0.5f && Mathf.Abs(targetVec.z - transform.eulerAngles.z) < 0.5f)
+        {
+            yield return new WaitForFixedUpdate();
+            Debug.Log("dd");
+            //transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, targetVec, 0.1f);
+        }
     }
 
     private void GravityLegForce() // 몸 중력 적용 시점 변경
